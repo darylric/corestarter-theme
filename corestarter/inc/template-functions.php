@@ -143,6 +143,26 @@ function corestarter_dynamic_css() {
 		}
 	}
 
+	// Responsive type scales.
+	$scales   = isset( $opts['responsive_scales'] ) ? $opts['responsive_scales'] : array();
+	$s_def    = corestarter_get_defaults()['responsive_scales'];
+	$th       = isset( $scales['tablet_heading'] ) ? floatval( $scales['tablet_heading'] ) : floatval( $s_def['tablet_heading'] );
+	$tb       = isset( $scales['tablet_body'] ) ? floatval( $scales['tablet_body'] ) : floatval( $s_def['tablet_body'] );
+	$mh       = isset( $scales['mobile_heading'] ) ? floatval( $scales['mobile_heading'] ) : floatval( $s_def['mobile_heading'] );
+	$mb       = isset( $scales['mobile_body'] ) ? floatval( $scales['mobile_body'] ) : floatval( $s_def['mobile_body'] );
+
+	// Interpolate intermediate breakpoints.
+	$bp1200_h = round( ( 1.0 + $th ) / 2, 4 );  // Midpoint between 1.0 and tablet.
+	$bp768_h  = round( ( $th + $mh ) / 2, 4 );   // Midpoint between tablet and mobile.
+	$bp768_b  = round( ( $tb + $mb ) / 2, 4 );
+	$bp480_h  = round( $mh, 4 );
+	$bp480_b  = round( $mb, 4 );
+
+	$css .= '@media (max-width: 1200px) { :root { --cs-type-scale: ' . $bp1200_h . '; } }';
+	$css .= '@media (max-width: 992px) { :root { --cs-type-scale: ' . $th . '; --cs-body-type-scale: ' . $tb . '; } }';
+	$css .= '@media (max-width: 768px) { :root { --cs-type-scale: ' . $bp768_h . '; --cs-body-type-scale: ' . $bp768_b . '; } }';
+	$css .= '@media (max-width: 480px) { :root { --cs-type-scale: ' . $bp480_h . '; --cs-body-type-scale: ' . $bp480_b . '; } }';
+
 	// Custom CSS from theme options.
 	$custom_css = isset( $opts['custom_css'] ) ? $opts['custom_css'] : '';
 	if ( $custom_css ) {

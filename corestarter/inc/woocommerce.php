@@ -34,15 +34,44 @@ function corestarter_woocommerce_setup() {
 add_action( 'after_setup_theme', 'corestarter_woocommerce_setup' );
 
 /**
+ * Tell WooCommerce the cart widget is always active.
+ *
+ * This ensures WooCommerce loads and localizes the cart-fragments
+ * script on every page, so the header mini-cart stays up to date.
+ */
+add_filter( 'woocommerce_widget_cart_is_hidden', '__return_false' );
+
+/**
  * Enqueue WooCommerce-specific styles only on shop pages.
  */
 function corestarter_woocommerce_scripts() {
+	// Header icon styles — always loaded (icons visible site-wide).
+	wp_enqueue_style(
+		'corestarter-woocommerce-header',
+		CORESTARTER_URI . '/assets/css/woocommerce-header.css',
+		array( 'corestarter-style' ),
+		CORESTARTER_VERSION
+	);
+
+	// Shop page styles — only on WooCommerce pages.
 	if ( is_woocommerce() || is_cart() || is_checkout() || is_account_page() ) {
 		wp_enqueue_style(
 			'corestarter-woocommerce',
 			CORESTARTER_URI . '/assets/css/woocommerce.css',
 			array( 'corestarter-style' ),
 			CORESTARTER_VERSION
+		);
+	}
+
+
+	// Shop filter drawer script — only on shop archive pages.
+	if ( is_shop() || is_product_category() || is_product_tag() || is_product_taxonomy() ) {
+		wp_enqueue_script(
+			'corestarter-shop-filters',
+			CORESTARTER_URI . '/assets/js/shop-filters.js',
+			array(),
+			CORESTARTER_VERSION,
+			array( 'strategy' => 'defer' )
 		);
 	}
 }
@@ -58,6 +87,7 @@ add_action( 'wp_enqueue_scripts', 'corestarter_woocommerce_scripts' );
  */
 function corestarter_woocommerce_dequeue_styles( $enqueue_styles ) {
 	unset( $enqueue_styles['woocommerce-layout'] );
+	unset( $enqueue_styles['woocommerce-smallscreen'] );
 	return $enqueue_styles;
 }
 add_filter( 'woocommerce_enqueue_styles', 'corestarter_woocommerce_dequeue_styles' );
@@ -136,7 +166,9 @@ function corestarter_woocommerce_header_cart() {
 	<div class="header-cart-wrap">
 		<?php corestarter_header_cart_link(); ?>
 		<div class="header-cart-dropdown">
-			<?php the_widget( 'WC_Widget_Cart', array( 'title' => '' ) ); ?>
+			<div class="widget_shopping_cart_content">
+				<?php woocommerce_mini_cart(); ?>
+			</div>
 		</div>
 	</div>
 	<?php
@@ -154,8 +186,8 @@ function corestarter_woocommerce_cart_link_fragment( $fragments ) {
 	$fragments['a.header-cart-link'] = ob_get_clean();
 
 	ob_start();
-	the_widget( 'WC_Widget_Cart', array( 'title' => '' ) );
-	$fragments['div.header-cart-dropdown'] = '<div class="header-cart-dropdown">' . ob_get_clean() . '</div>';
+	woocommerce_mini_cart();
+	$fragments['div.widget_shopping_cart_content'] = '<div class="widget_shopping_cart_content">' . ob_get_clean() . '</div>';
 
 	return $fragments;
 }
@@ -169,7 +201,7 @@ add_filter( 'woocommerce_add_to_cart_fragments', 'corestarter_woocommerce_cart_l
  */
 function corestarter_woocommerce_breadcrumb_defaults( $defaults ) {
 	$defaults['delimiter']   = ' <span class="breadcrumb-sep">/</span> ';
-	$defaults['wrap_before'] = '<nav class="woocommerce-breadcrumb" aria-label="' . esc_attr__( 'Breadcrumb', 'corestarter' ) . '">';
+	$defaults['wrap_before'] = '<nav class="woocommerce-breadcrumb" aria-label="' . esc_attr__( 'Breadcrumb', 'corestarter' ) . '" itemscope itemtype="https://schema.org/BreadcrumbList">';
 	$defaults['wrap_after']  = '</nav>';
 	return $defaults;
 }
@@ -194,3 +226,108 @@ function corestarter_wc_lazy_load_images( $attr ) {
 	return $attr;
 }
 add_filter( 'wp_get_attachment_image_attributes', 'corestarter_wc_lazy_load_images' );
+
+/**
+ * Output the header My Account icon link.
+ */
+function corestarter_header_account_link() {
+	if ( ! function_exists( 'wc_get_page_permalink' ) ) {
+		return;
+	}
+	$account_url = wc_get_page_permalink( 'myaccount' );
+	?>
+	<a class="header-account-link" href="<?php echo esc_url( $account_url ); ?>" title="<?php esc_attr_e( 'My Account', 'corestarter' ); ?>">
+		<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+		<span class="screen-reader-text"><?php esc_html_e( 'My Account', 'corestarter' ); ?></span>
+	</a>
+	<?php
+}
+
+/**
+ * Remove WooCommerce pages (Cart, Checkout, My Account) from the primary nav menu.
+ * These are replaced by header icons.
+ *
+ * @param array  $sorted_menu_items Sorted menu items.
+ * @param object $args              Menu arguments.
+ * @return array Filtered menu items.
+ */
+function corestarter_remove_wc_menu_items( $sorted_menu_items, $args ) {
+	if ( 'primary' !== $args->theme_location ) {
+		return $sorted_menu_items;
+	}
+
+	$wc_page_ids = array_filter( array(
+		wc_get_page_id( 'cart' ),
+		wc_get_page_id( 'checkout' ),
+		wc_get_page_id( 'myaccount' ),
+	) );
+
+	if ( empty( $wc_page_ids ) ) {
+		return $sorted_menu_items;
+	}
+
+	foreach ( $sorted_menu_items as $key => $item ) {
+		if ( 'page' === $item->object && in_array( (int) $item->object_id, $wc_page_ids, true ) ) {
+			unset( $sorted_menu_items[ $key ] );
+		}
+	}
+
+	return $sorted_menu_items;
+}
+add_filter( 'wp_nav_menu_objects', 'corestarter_remove_wc_menu_items', 10, 2 );
+
+/**
+ * Force left sidebar layout on WooCommerce shop archive pages.
+ *
+ * @param array $classes Existing body classes.
+ * @return array Modified body classes.
+ */
+function corestarter_woocommerce_force_shop_sidebar( $classes ) {
+	if ( is_shop() || is_product_category() || is_product_tag() || is_product_taxonomy() ) {
+		$classes = array_diff( $classes, array( 'sidebar-right', 'sidebar-none', 'no-sidebar' ) );
+		$classes[] = 'sidebar-left';
+		$classes[] = 'woocommerce-has-shop-sidebar';
+	}
+	return $classes;
+}
+add_filter( 'body_class', 'corestarter_woocommerce_force_shop_sidebar', 20 );
+
+/**
+ * Wrap the Sort By and result count in a toolbar div.
+ */
+function corestarter_shop_toolbar_open() {
+	echo '<div class="shop-toolbar">';
+}
+add_action( 'woocommerce_before_shop_loop', 'corestarter_shop_toolbar_open', 15 );
+
+function corestarter_shop_toolbar_close() {
+	echo '</div>';
+}
+add_action( 'woocommerce_before_shop_loop', 'corestarter_shop_toolbar_close', 35 );
+
+/**
+ * Output the mobile filter toggle button and overlay.
+ */
+function corestarter_shop_filter_toggle() {
+	if ( ! ( is_shop() || is_product_category() || is_product_tag() || is_product_taxonomy() ) ) {
+		return;
+	}
+	?>
+	<button class="shop-filter-toggle" aria-controls="shop-sidebar" aria-expanded="false">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+		<?php esc_html_e( 'Filter Products', 'corestarter' ); ?>
+	</button>
+	<div class="shop-sidebar-overlay" aria-hidden="true"></div>
+	<?php
+}
+add_action( 'woocommerce_before_shop_loop', 'corestarter_shop_filter_toggle', 12 );
+
+/**
+ * Use h3 for product titles in the shop loop to maintain heading hierarchy.
+ * h1 = page title, h2 = widget/section titles, h3 = product titles.
+ */
+function corestarter_shop_loop_product_title() {
+	echo '<h3 class="woocommerce-loop-product__title">' . get_the_title() . '</h3>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+remove_action( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10 );
+add_action( 'woocommerce_shop_loop_item_title', 'corestarter_shop_loop_product_title', 10 );

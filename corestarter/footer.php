@@ -81,15 +81,6 @@ $footer_text = corestarter_get_option( 'footer_text' );
 					<?php esc_html_e( 'All rights reserved.', 'corestarter' ); ?>
 				</p>
 
-				<p class="theme-credit">
-					<?php
-					printf(
-						/* translators: %s: Theme author link. */
-						esc_html__( 'Theme by %s', 'corestarter' ),
-						'<a href="https://github.com/darylric" rel="nofollow noopener" target="_blank">Daryl Ric Lanaban</a>'
-					);
-					?>
-				</p>
 			</div>
 		</div>
 	</footer>

@@ -16,5 +16,9 @@ get_header();
 </div>
 
 <?php
-get_sidebar();
+if ( is_shop() || is_product_category() || is_product_tag() || is_product_taxonomy() ) {
+	get_sidebar( 'shop' );
+} else {
+	get_sidebar();
+}
 get_footer();

@@ -1,0 +1,302 @@
+/**
+ * WooCommerce Header Icons
+ *
+ * Styles for the header icon bar (search, account, cart).
+ * Loaded on every page since icons are visible site-wide.
+ *
+ * @package Corestarter
+ * @since   1.0.0
+ */
+
+/* ==========================================================================
+   Header Icons Container
+   ========================================================================== */
+
+.header-icons {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	flex-shrink: 0;
+	position: relative;
+}
+
+/* Shared icon button / link base */
+.header-search-toggle,
+.header-account-link,
+.header-cart-link {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--cs-text);
+	padding: 0.5rem;
+	background: none;
+	border: none;
+	cursor: pointer;
+	border-radius: var(--cs-radius);
+	transition: color var(--cs-transition), background-color var(--cs-transition);
+	text-decoration: none;
+}
+
+.header-search-toggle:hover,
+.header-search-toggle:focus-visible,
+.header-account-link:hover,
+.header-account-link:focus-visible,
+.header-cart-link:hover,
+.header-cart-link:focus-visible {
+	color: var(--cs-primary);
+	background-color: var(--cs-bg-alt);
+}
+
+/* ==========================================================================
+   Cart Icon & Mini-Cart Dropdown
+   ========================================================================== */
+
+.header-cart-wrap {
+	position: relative;
+}
+
+.header-cart-link .cart-count {
+	position: absolute;
+	top: 0;
+	right: -4px;
+	background: var(--cs-primary);
+	color: #fff;
+	font-size: 0.6875rem;
+	font-weight: 700;
+	width: 18px;
+	height: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	line-height: 1;
+}
+
+/* Mini-cart dropdown — CSS-only on hover/focus */
+.header-cart-dropdown {
+	display: none;
+	position: absolute;
+	right: 0;
+	top: 100%;
+	width: 320px;
+	background: #fff;
+	border: 1px solid var(--cs-border);
+	border-radius: var(--cs-radius);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	z-index: 1000;
+	padding: 1rem;
+}
+
+.header-cart-wrap:hover .header-cart-dropdown,
+.header-cart-wrap:focus-within .header-cart-dropdown {
+	display: block;
+}
+
+.header-cart-dropdown .widget_shopping_cart_content {
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+.header-cart-dropdown ul.cart_list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.header-cart-dropdown ul.cart_list li {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.625rem 0;
+	border-bottom: 1px solid var(--cs-border);
+	font-size: 0.8125rem;
+}
+
+.header-cart-dropdown ul.cart_list li:last-child {
+	border-bottom: none;
+}
+
+.header-cart-dropdown ul.cart_list li a {
+	color: var(--cs-text);
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.header-cart-dropdown ul.cart_list li a:hover {
+	color: var(--cs-primary);
+}
+
+.header-cart-dropdown ul.cart_list li img {
+	width: 48px;
+	height: 48px;
+	object-fit: cover;
+	border-radius: var(--cs-radius);
+	flex-shrink: 0;
+}
+
+.header-cart-dropdown .quantity {
+	display: block;
+	font-size: 0.75rem;
+	color: var(--cs-text-light);
+}
+
+.header-cart-dropdown .amount {
+	font-weight: 600;
+	color: var(--cs-primary);
+}
+
+.header-cart-dropdown dl.variation {
+	display: none;
+}
+
+.header-cart-dropdown .woocommerce-mini-cart__total {
+	padding: 0.75rem 0 0.5rem;
+	font-weight: 600;
+	font-size: 0.875rem;
+	border-top: 1px solid var(--cs-border);
+	margin-top: 0.25rem;
+}
+
+.header-cart-dropdown .woocommerce-mini-cart__buttons {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.header-cart-dropdown .woocommerce-mini-cart__buttons a,
+.header-cart-dropdown .woocommerce-mini-cart__buttons a.button,
+.header-cart-dropdown .woocommerce-mini-cart__buttons a.button.alt,
+.header-cart-dropdown .woocommerce-mini-cart__buttons a.button.checkout {
+	flex: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	padding: 0.5rem 0.75rem;
+	border-radius: var(--cs-radius);
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color var(--cs-transition);
+}
+
+.header-cart-dropdown .woocommerce-mini-cart__buttons a:first-child {
+	background: var(--cs-bg-alt);
+	border: 1px solid var(--cs-border);
+	color: var(--cs-text);
+}
+
+.header-cart-dropdown .woocommerce-mini-cart__buttons a:first-child:hover {
+	background: var(--cs-border);
+}
+
+.header-cart-dropdown .woocommerce-mini-cart__buttons a:last-child {
+	background: var(--cs-primary);
+	border: 1px solid var(--cs-primary);
+	color: #fff;
+}
+
+.header-cart-dropdown .woocommerce-mini-cart__buttons a:last-child:hover {
+	background: var(--cs-secondary);
+	border-color: var(--cs-secondary);
+}
+
+.header-cart-dropdown a.remove,
+.header-cart-dropdown a.remove_from_cart_button {
+	font-size: 0;
+	width: 20px;
+	height: 20px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--cs-text-light) !important;
+	flex-shrink: 0;
+	border-radius: 50%;
+	transition: color var(--cs-transition), background-color var(--cs-transition);
+}
+
+.header-cart-dropdown a.remove::before,
+.header-cart-dropdown a.remove_from_cart_button::before {
+	content: "\00d7";
+	font-size: 1rem;
+	line-height: 1;
+}
+
+.header-cart-dropdown a.remove:hover,
+.header-cart-dropdown a.remove_from_cart_button:hover {
+	color: #ef4444 !important;
+	background: rgba(239, 68, 68, 0.08);
+}
+
+.header-cart-dropdown .woocommerce-mini-cart__empty-message {
+	text-align: center;
+	color: var(--cs-text-light);
+	padding: 1rem 0;
+	font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   Search Dropdown
+   ========================================================================== */
+
+.header-search-dropdown {
+	display: none;
+	position: absolute;
+	right: 0;
+	top: 100%;
+	width: 320px;
+	background: #fff;
+	border: 1px solid var(--cs-border);
+	border-radius: var(--cs-radius);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	z-index: 1000;
+	padding: 1rem;
+}
+
+.header-search-dropdown.is-active {
+	display: block;
+}
+
+.header-search-dropdown .search-form {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.header-search-dropdown .search-field {
+	flex: 1;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--cs-border);
+	border-radius: var(--cs-radius);
+	font-family: inherit;
+	font-size: 0.9375rem;
+}
+
+.header-search-dropdown .search-field:focus {
+	outline: none;
+	border-color: var(--cs-primary);
+	box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.header-search-dropdown .search-submit {
+	flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Mobile Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+	/* Hide mini-cart dropdown on mobile — link navigates to cart page */
+	.header-cart-dropdown {
+		display: none !important;
+	}
+
+	.header-search-dropdown {
+		position: fixed;
+		left: 1rem;
+		right: 1rem;
+		top: auto;
+		width: auto;
+	}
+}

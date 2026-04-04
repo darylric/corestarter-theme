@@ -112,6 +112,7 @@ a:focus {
 #primary {
 	flex: 1;
 	min-width: 0;
+	overflow-x: hidden;
 }
 
 /* Sidebar */
@@ -200,7 +201,6 @@ a:focus {
 .header-inner {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	min-height: 70px;
 	gap: 1.5rem;
 }
@@ -242,6 +242,10 @@ a:focus {
 /* ==========================================================================
    Navigation
    ========================================================================== */
+
+.main-navigation {
+	margin-left: auto;
+}
 
 .main-navigation ul {
 	list-style: none;
@@ -926,6 +930,12 @@ a:focus {
 	margin-right: -2rem;
 }
 
+/* Prevent WooCommerce block cart/checkout from breaking out of container */
+.woocommerce-page .alignwide {
+	margin-left: 0;
+	margin-right: 0;
+}
+
 .alignfull {
 	margin-left: calc(-50vw + 50%);
 	margin-right: calc(-50vw + 50%);
@@ -1067,6 +1077,11 @@ a:focus {
 		margin-left: -1rem;
 		margin-right: -1rem;
 	}
+
+	.woocommerce-page .alignwide {
+		margin-left: 0;
+		margin-right: 0;
+	}
 }
 
 /* --- Tablet Portrait / Mobile ------------------------------------------ */
@@ -1142,6 +1157,28 @@ a:focus {
 	.header-inner {
 		flex-wrap: wrap;
 		min-height: 60px;
+	}
+
+	/* On mobile: branding (1) | icons (2) | hamburger (3) */
+	.site-branding {
+		order: 1;
+	}
+
+	.header-icons {
+		order: 2;
+		margin-left: auto;
+	}
+
+	.main-navigation {
+		order: 3;
+		margin-left: 0;
+	}
+
+	/* Mobile nav dropdown spans full width on second row */
+	.main-navigation ul {
+		width: 100vw;
+		margin-left: calc(-1 * var(--cs-container-pad));
+		margin-right: calc(-1 * var(--cs-container-pad));
 	}
 
 	/* Forms — prevent iOS zoom on focus */

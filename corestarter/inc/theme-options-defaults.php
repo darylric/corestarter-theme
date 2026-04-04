@@ -52,6 +52,14 @@ function corestarter_get_defaults() {
 			'span' => $typography_defaults,
 		),
 
+		// Responsive Scales.
+		'responsive_scales'    => array(
+			'tablet_heading' => '0.9',
+			'tablet_body'    => '0.95',
+			'mobile_heading' => '0.825',
+			'mobile_body'    => '0.925',
+		),
+
 		// Colors.
 		'primary_color'        => '#2563eb',
 		'secondary_color'      => '#1e40af',

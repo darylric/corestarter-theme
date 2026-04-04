@@ -229,6 +229,15 @@ function corestarter_sanitize_options( $input ) {
 		}
 	}
 
+	// Responsive Scales.
+	$scale_keys     = array( 'tablet_heading', 'tablet_body', 'mobile_heading', 'mobile_body' );
+	$scale_defaults = $defaults['responsive_scales'];
+	$clean['responsive_scales'] = array();
+	foreach ( $scale_keys as $sk ) {
+		$val = isset( $input['responsive_scales'][ $sk ] ) ? floatval( $input['responsive_scales'][ $sk ] ) : floatval( $scale_defaults[ $sk ] );
+		$clean['responsive_scales'][ $sk ] = (string) max( 0.5, min( 1.0, $val ) );
+	}
+
 	// Colors.
 	$color_keys = array( 'primary_color', 'secondary_color', 'footer_bg_color' );
 	foreach ( $color_keys as $ck ) {
@@ -514,6 +523,50 @@ function corestarter_options_page_html() {
 						<?php endforeach; ?>
 					</tbody>
 				</table>
+
+				<h3 style="margin-top: 2rem;"><?php esc_html_e( 'Responsive Scaling', 'corestarter' ); ?></h3>
+				<p class="description"><?php esc_html_e( 'Controls how much text scales down on smaller screens. 1.0 = same as desktop, 0.75 = 25% smaller.', 'corestarter' ); ?></p>
+
+				<?php
+				$scales       = isset( $opts['responsive_scales'] ) ? $opts['responsive_scales'] : $defaults['responsive_scales'];
+				$scale_fields = array(
+					'tablet_heading' => __( 'Tablet — Heading Scale', 'corestarter' ),
+					'tablet_body'    => __( 'Tablet — Body Text Scale', 'corestarter' ),
+					'mobile_heading' => __( 'Mobile — Heading Scale', 'corestarter' ),
+					'mobile_body'    => __( 'Mobile — Body Text Scale', 'corestarter' ),
+				);
+				?>
+				<table class="form-table">
+					<?php foreach ( $scale_fields as $field_key => $field_label ) :
+						$field_val = isset( $scales[ $field_key ] ) ? $scales[ $field_key ] : $defaults['responsive_scales'][ $field_key ];
+						?>
+						<tr>
+							<th scope="row"><?php echo esc_html( $field_label ); ?></th>
+							<td>
+								<input type="range"
+									   name="corestarter_options[responsive_scales][<?php echo esc_attr( $field_key ); ?>]"
+									   value="<?php echo esc_attr( $field_val ); ?>"
+									   min="0.5" max="1" step="0.025"
+									   data-default="<?php echo esc_attr( $defaults['responsive_scales'][ $field_key ] ); ?>"
+									   oninput="this.nextElementSibling.textContent = this.value"
+									   style="vertical-align: middle; width: 220px;">
+								<span style="display: inline-block; min-width: 3em; text-align: center; font-weight: 600;"><?php echo esc_html( $field_val ); ?></span>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+				<p>
+					<button type="button" class="button" id="cs-reset-scales"><?php esc_html_e( 'Reset to Defaults', 'corestarter' ); ?></button>
+				</p>
+				<script>
+				document.getElementById('cs-reset-scales').addEventListener('click', function() {
+					var sliders = this.closest('.cs-tab-content').querySelectorAll('input[type="range"][data-default]');
+					sliders.forEach(function(s) {
+						s.value = s.dataset.default;
+						s.nextElementSibling.textContent = s.dataset.default;
+					});
+				});
+				</script>
 			</div>
 
 			<!-- ============================================================
