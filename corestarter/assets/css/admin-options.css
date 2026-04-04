@@ -1,0 +1,246 @@
+/**
+ * Corestarter Admin Options Styles
+ *
+ * @package Corestarter
+ * @since   1.1.0
+ */
+
+/* Wrapper */
+.cs-options-wrap {
+	max-width: 1100px;
+}
+
+/* Tabs */
+.cs-nav-tabs {
+	margin-bottom: 0;
+}
+
+.cs-tab-content {
+	display: none;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-top: none;
+	padding: 20px 24px;
+}
+
+.cs-tab-content.active {
+	display: block;
+}
+
+.cs-tab-content h2 {
+	margin-top: 0;
+	padding-top: 0;
+}
+
+/* Form */
+.cs-options-form .form-table th {
+	width: 200px;
+	padding-top: 20px;
+}
+
+.cs-options-form .submit {
+	padding: 16px 0 0;
+}
+
+/* -----------------------------------------------
+   Media Upload Field
+   ----------------------------------------------- */
+.cs-media-field {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.cs-media-preview {
+	width: 200px;
+	min-height: 50px;
+	background: #f0f0f1;
+	border: 1px dashed #c3c4c7;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.cs-media-preview img {
+	max-width: 100%;
+	max-height: 100px;
+	display: block;
+}
+
+.cs-media-preview:empty {
+	min-height: 60px;
+}
+
+/* -----------------------------------------------
+   Typography Table
+   ----------------------------------------------- */
+.cs-typography-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.cs-typography-table thead th {
+	text-align: left;
+	padding: 10px 12px;
+	border-bottom: 2px solid #c3c4c7;
+	font-weight: 600;
+}
+
+.cs-typography-table tbody tr {
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.cs-typography-table tbody td {
+	padding: 10px 12px;
+	vertical-align: middle;
+}
+
+.cs-typography-table select {
+	min-width: 180px;
+}
+
+.cs-typography-table .small-text {
+	width: 70px;
+}
+
+/* -----------------------------------------------
+   Social Repeater
+   ----------------------------------------------- */
+#cs-social-repeater {
+	margin: 16px 0;
+}
+
+.cs-social-row {
+	background: #f9f9f9;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 16px;
+	margin-bottom: 12px;
+}
+
+.cs-social-row-inner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 16px;
+}
+
+.cs-social-icon-field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-width: 120px;
+}
+
+.cs-social-icon-preview {
+	width: 60px;
+	height: 60px;
+	min-height: 60px;
+}
+
+.cs-social-icon-preview img {
+	max-height: 60px;
+}
+
+.cs-social-link-field {
+	flex: 1;
+	min-width: 200px;
+}
+
+.cs-social-link-field label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.cs-social-newtab-field {
+	display: flex;
+	align-items: center;
+	padding-top: 24px;
+}
+
+.cs-social-actions {
+	display: flex;
+	align-items: center;
+	padding-top: 18px;
+}
+
+.cs-social-remove-row .dashicons {
+	color: #b32d2e;
+	vertical-align: middle;
+}
+
+.cs-social-remove-row:hover .dashicons {
+	color: #a00;
+}
+
+#cs-add-social {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+#cs-add-social .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	line-height: 16px;
+}
+
+/* -----------------------------------------------
+   Code Editor
+   ----------------------------------------------- */
+.cs-code-editor {
+	font-family: Consolas, Monaco, "Courier New", monospace;
+	font-size: 13px;
+	line-height: 1.6;
+	tab-size: 4;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	resize: vertical;
+}
+
+/* -----------------------------------------------
+   Color Picker Alignment
+   ----------------------------------------------- */
+.cs-options-form .wp-picker-container {
+	display: inline-block;
+}
+
+/* -----------------------------------------------
+   Responsive
+   ----------------------------------------------- */
+@media (max-width: 782px) {
+	.cs-options-form .form-table th {
+		width: auto;
+		padding-bottom: 4px;
+	}
+
+	.cs-social-row-inner {
+		flex-direction: column;
+	}
+
+	.cs-social-newtab-field,
+	.cs-social-actions {
+		padding-top: 0;
+	}
+
+	.cs-typography-table thead {
+		display: none;
+	}
+
+	.cs-typography-table tbody tr {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		padding: 10px 0;
+	}
+
+	.cs-typography-table tbody td {
+		padding: 4px;
+	}
+}

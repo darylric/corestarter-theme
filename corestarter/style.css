@@ -1,0 +1,17 @@
+/*
+Theme Name: Corestarter
+Theme URI: https://github.com/darylric/corestarter
+Author: Daryl Ric Lanaban
+Author URI: https://github.com/darylric
+Description: A clean, modern, and fully customizable WordPress theme optimized for speed and SEO. Versatile and suitable for any genre with full WooCommerce compatibility.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: corestarter
+Tags: custom-logo, custom-menu, featured-images, threaded-comments, translation-ready, e-commerce, blog, one-column, two-columns, right-sidebar, custom-header, custom-background, footer-widgets
+*/
+
+/* Base theme styles are loaded from assets/css/main.css */
