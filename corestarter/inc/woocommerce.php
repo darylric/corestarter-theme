@@ -8,6 +8,19 @@
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
+
+/**
+ * Declare compatibility with WooCommerce features (HPOS, cart/checkout blocks).
+ */
+function corestarter_declare_woocommerce_compatibility() {
+	if ( class_exists( FeaturesUtil::class ) ) {
+		FeaturesUtil::declare_compatibility( 'custom_order_tables', CORESTARTER_DIR . '/functions.php', true );
+		FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', CORESTARTER_DIR . '/functions.php', true );
+	}
+}
+add_action( 'before_woocommerce_init', 'corestarter_declare_woocommerce_compatibility' );
+
 /**
  * Declare WooCommerce support.
  */
@@ -327,7 +340,7 @@ add_action( 'woocommerce_before_shop_loop', 'corestarter_shop_filter_toggle', 12
  * h1 = page title, h2 = widget/section titles, h3 = product titles.
  */
 function corestarter_shop_loop_product_title() {
-	echo '<h3 class="woocommerce-loop-product__title">' . get_the_title() . '</h3>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '<h3 class="woocommerce-loop-product__title">' . esc_html( get_the_title() ) . '</h3>';
 }
 remove_action( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10 );
 add_action( 'woocommerce_shop_loop_item_title', 'corestarter_shop_loop_product_title', 10 );

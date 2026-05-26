@@ -21,6 +21,13 @@ define( 'CORESTARTER_URI', get_template_directory_uri() );
  * Sets up theme defaults and registers support for various WordPress features.
  */
 function corestarter_setup() {
+	global $content_width;
+
+	// Set content width.
+	if ( ! isset( $content_width ) ) {
+		$content_width = 1200;
+	}
+
 	// Make theme available for translation.
 	load_theme_textdomain( 'corestarter', CORESTARTER_DIR . '/languages' );
 
@@ -71,11 +78,6 @@ function corestarter_setup() {
 
 	// Add support for editor styles.
 	add_theme_support( 'editor-styles' );
-
-	// Set content width.
-	if ( ! isset( $content_width ) ) {
-		$content_width = 1200;
-	}
 }
 add_action( 'after_setup_theme', 'corestarter_setup' );
 
