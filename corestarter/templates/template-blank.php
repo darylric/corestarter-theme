@@ -10,6 +10,7 @@
  * @since   1.0.0
  */
 
+defined( 'ABSPATH' ) || exit;
 ?>
 <!doctype html>
 <html <?php language_attributes(); ?>>

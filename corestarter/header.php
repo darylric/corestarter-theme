@@ -33,7 +33,13 @@ $logo_url     = corestarter_get_option( 'logo_url' );
 				<?php if ( $logo_url ) : ?>
 					<div class="site-logo">
 						<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
-							<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
+							<img
+								src="<?php echo esc_url( $logo_url ); ?>"
+								alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>"
+								fetchpriority="high"
+								loading="eager"
+								decoding="sync"
+							>
 						</a>
 					</div>
 				<?php endif; ?>

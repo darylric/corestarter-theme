@@ -130,12 +130,13 @@ add_action( 'woocommerce_after_main_content', 'corestarter_woocommerce_wrapper_a
 remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar', 10 );
 
 /**
- * Modify products per page.
+ * Modify products per page using the theme option.
  *
  * @return int Number of products per page.
  */
 function corestarter_woocommerce_products_per_page() {
-	return 12;
+	$per_page = absint( corestarter_get_option( 'products_per_page' ) );
+	return $per_page > 0 ? $per_page : 12;
 }
 add_filter( 'loop_shop_per_page', 'corestarter_woocommerce_products_per_page' );
 
@@ -163,7 +164,7 @@ function corestarter_header_cart_link() {
 	?>
 	<a class="header-cart-link" href="<?php echo esc_url( wc_get_cart_url() ); ?>" title="<?php esc_attr_e( 'View cart', 'corestarter' ); ?>">
 		<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-		<span class="cart-count"><?php echo esc_html( WC()->cart->get_cart_contents_count() ); ?></span>
+		<span class="cart-count" aria-live="polite" aria-atomic="true"><?php echo esc_html( WC()->cart->get_cart_contents_count() ); ?></span>
 	</a>
 	<?php
 }

@@ -126,17 +126,27 @@ function corestarter_resource_hints() {
 	// Preload main stylesheet.
 	echo '<link rel="preload" href="' . esc_url( CORESTARTER_URI . '/assets/css/main.css' ) . '" as="style">' . "\n";
 
-	// Preconnect to Google Fonts — only when Google Fonts are in use.
-	$typography    = corestarter_get_option( 'typography' );
-	$google_fonts  = corestarter_get_google_fonts();
+	// Preconnect + preload Google Fonts — only when Google Fonts are in use.
+	$typography   = corestarter_get_option( 'typography' );
+	$google_fonts = corestarter_get_google_fonts();
 
 	if ( is_array( $typography ) ) {
+		$used_google_families = array();
+
 		foreach ( $typography as $settings ) {
 			if ( ! empty( $settings['family'] ) && in_array( $settings['family'], $google_fonts, true ) ) {
-				echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
-				echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
-				break;
+				$used_google_families[] = $settings['family'];
 			}
+		}
+
+		if ( ! empty( $used_google_families ) ) {
+			// Preconnect to Google Fonts origins.
+			echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
+			echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+
+			// DNS-prefetch as a fallback for older browsers.
+			echo '<link rel="dns-prefetch" href="https://fonts.googleapis.com">' . "\n";
+			echo '<link rel="dns-prefetch" href="https://fonts.gstatic.com">' . "\n";
 		}
 	}
 }

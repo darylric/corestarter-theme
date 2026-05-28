@@ -6,6 +6,8 @@
  * @since   1.0.0
  */
 
+defined( 'ABSPATH' ) || exit;
+
 if ( post_password_required() ) {
 	return;
 }

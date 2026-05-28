@@ -151,13 +151,15 @@ function corestarter_dynamic_css() {
 	$mh       = isset( $scales['mobile_heading'] ) ? floatval( $scales['mobile_heading'] ) : floatval( $s_def['mobile_heading'] );
 	$mb       = isset( $scales['mobile_body'] ) ? floatval( $scales['mobile_body'] ) : floatval( $s_def['mobile_body'] );
 
-	// Interpolate intermediate breakpoints.
-	$bp1200_h = round( ( 1.0 + $th ) / 2, 4 );  // Midpoint between 1.0 and tablet.
-	$bp768_h  = round( ( $th + $mh ) / 2, 4 );   // Midpoint between tablet and mobile.
-	$bp768_b  = round( ( $tb + $mb ) / 2, 4 );
+	// Interpolate intermediate breakpoints (desktop baseline = 1.0 at > 1440px).
+	$bp1440_h = round( ( 1.0 + $th ) / 2, 4 );   // Midpoint between 1.0 (desktop) and tablet heading.
+	$bp1200_h = round( $th, 4 );                    // Full tablet heading scale reached at 1200px.
+	$bp768_h  = round( ( $th + $mh ) / 2, 4 );    // Midpoint between tablet and mobile heading.
+	$bp768_b  = round( ( $tb + $mb ) / 2, 4 );    // Midpoint between tablet and mobile body.
 	$bp480_h  = round( $mh, 4 );
 	$bp480_b  = round( $mb, 4 );
 
+	$css .= '@media (max-width: 1440px) { :root { --cs-type-scale: ' . $bp1440_h . '; } }';
 	$css .= '@media (max-width: 1200px) { :root { --cs-type-scale: ' . $bp1200_h . '; } }';
 	$css .= '@media (max-width: 992px) { :root { --cs-type-scale: ' . $th . '; --cs-body-type-scale: ' . $tb . '; } }';
 	$css .= '@media (max-width: 768px) { :root { --cs-type-scale: ' . $bp768_h . '; --cs-body-type-scale: ' . $bp768_b . '; } }';
@@ -186,26 +188,109 @@ function corestarter_custom_js() {
 add_action( 'wp_footer', 'corestarter_custom_js', 100 );
 
 /**
- * Add SEO-friendly structured data to header.
+ * Output SEO-friendly Schema.org structured data.
+ *
+ * - WebSite + SearchAction on the homepage
+ * - Article on single posts
+ * - BreadcrumbList on all non-homepage singular views
  */
 function corestarter_schema_markup() {
-	if ( is_singular( 'post' ) ) {
-		echo '<script type="application/ld+json">';
-		echo wp_json_encode(
-			array(
-				'@context'      => 'https://schema.org',
-				'@type'         => 'Article',
-				'headline'      => get_the_title(),
-				'datePublished' => get_the_date( 'c' ),
-				'dateModified'  => get_the_modified_date( 'c' ),
-				'author'        => array(
-					'@type' => 'Person',
-					'name'  => get_the_author(),
+	$schemas = array();
+
+	// WebSite + Sitelinks SearchBox — homepage only.
+	if ( is_front_page() ) {
+		$schemas[] = array(
+			'@context'        => 'https://schema.org',
+			'@type'           => 'WebSite',
+			'name'            => get_bloginfo( 'name' ),
+			'url'             => home_url( '/' ),
+			'potentialAction' => array(
+				'@type'       => 'SearchAction',
+				'target'      => array(
+					'@type'       => 'EntryPoint',
+					'urlTemplate' => home_url( '/?s={search_term_string}' ),
 				),
+				'query-input' => 'required name=search_term_string',
 			),
-			JSON_UNESCAPED_SLASHES
 		);
-		echo '</script>';
+	}
+
+	// Article schema — single posts only.
+	if ( is_singular( 'post' ) ) {
+		$schemas[] = array(
+			'@context'         => 'https://schema.org',
+			'@type'            => 'Article',
+			'headline'         => get_the_title(),
+			'url'              => get_permalink(),
+			'datePublished'    => get_the_date( 'c' ),
+			'dateModified'     => get_the_modified_date( 'c' ),
+			'author'           => array(
+				'@type' => 'Person',
+				'name'  => get_the_author(),
+				'url'   => get_author_posts_url( get_the_author_meta( 'ID' ) ),
+			),
+			'publisher'        => array(
+				'@type' => 'Organization',
+				'name'  => get_bloginfo( 'name' ),
+				'url'   => home_url( '/' ),
+			),
+			'description'      => get_the_excerpt(),
+			'image'            => has_post_thumbnail() ? wp_get_attachment_url( get_post_thumbnail_id() ) : null,
+		);
+	}
+
+	// BreadcrumbList — all singular non-homepage views.
+	if ( is_singular() && ! is_front_page() ) {
+		$items = array(
+			array(
+				'@type'    => 'ListItem',
+				'position' => 1,
+				'name'     => esc_html__( 'Home', 'corestarter' ),
+				'item'     => home_url( '/' ),
+			),
+		);
+
+		if ( is_singular( 'post' ) ) {
+			$categories = get_the_category();
+			if ( ! empty( $categories ) ) {
+				$items[] = array(
+					'@type'    => 'ListItem',
+					'position' => 2,
+					'name'     => esc_html( $categories[0]->name ),
+					'item'     => esc_url( get_category_link( $categories[0]->term_id ) ),
+				);
+				$items[] = array(
+					'@type'    => 'ListItem',
+					'position' => 3,
+					'name'     => get_the_title(),
+					'item'     => get_permalink(),
+				);
+			} else {
+				$items[] = array(
+					'@type'    => 'ListItem',
+					'position' => 2,
+					'name'     => get_the_title(),
+					'item'     => get_permalink(),
+				);
+			}
+		} else {
+			$items[] = array(
+				'@type'    => 'ListItem',
+				'position' => 2,
+				'name'     => get_the_title(),
+				'item'     => get_permalink(),
+			);
+		}
+
+		$schemas[] = array(
+			'@context'        => 'https://schema.org',
+			'@type'           => 'BreadcrumbList',
+			'itemListElement' => $items,
+		);
+	}
+
+	foreach ( $schemas as $schema ) {
+		echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
 	}
 }
 add_action( 'wp_head', 'corestarter_schema_markup' );

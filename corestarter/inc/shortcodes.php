@@ -9,20 +9,34 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Load shortcode files from the shortcodes directory.
+ * Load shortcode files from the shortcodes/ directories.
+ *
+ * Loads from the parent theme's shortcodes/ folder first, then from the
+ * child theme's shortcodes/ folder. Child theme files with the same name
+ * as a parent file will NOT override it (both are loaded); name your child
+ * theme shortcode files distinctly to avoid conflicts.
+ *
+ * To add custom shortcodes, place .php files in:
+ *   corestarter-child/shortcodes/my-shortcode.php
  */
 function corestarter_load_shortcodes() {
-	$shortcode_dir = CORESTARTER_DIR . '/shortcodes/';
+	$dirs = array( CORESTARTER_DIR . '/shortcodes/' );
 
-	if ( ! is_dir( $shortcode_dir ) ) {
-		return;
+	// Also load from child theme's shortcodes/ directory (if different from parent).
+	$child_dir = get_stylesheet_directory() . '/shortcodes/';
+	if ( get_stylesheet_directory() !== get_template_directory() && is_dir( $child_dir ) ) {
+		$dirs[] = $child_dir;
 	}
 
-	$files = glob( $shortcode_dir . '*.php' );
-
-	if ( $files ) {
-		foreach ( $files as $file ) {
-			require_once $file;
+	foreach ( $dirs as $dir ) {
+		if ( ! is_dir( $dir ) ) {
+			continue;
+		}
+		$files = glob( $dir . '*.php' );
+		if ( $files ) {
+			foreach ( $files as $file ) {
+				require_once $file;
+			}
 		}
 	}
 }

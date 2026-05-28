@@ -36,8 +36,11 @@ function corestarter_get_defaults() {
 
 		// Layout.
 		'container_type'       => 'fixed',
-		'container_width'      => 1200,
+		'container_width'      => 1440,
 		'sidebar_position'     => 'right',
+
+		// WooCommerce.
+		'products_per_page'    => 12,
 
 		// Typography.
 		'typography'           => array(
@@ -117,10 +120,33 @@ function corestarter_get_option( $key, $subkey = null ) {
 	}
 
 	if ( null !== $subkey && is_array( $cache[ $key ] ) ) {
-		return isset( $cache[ $key ][ $subkey ] ) ? $cache[ $key ][ $subkey ] : null;
+		$value = isset( $cache[ $key ][ $subkey ] ) ? $cache[ $key ][ $subkey ] : null;
+		/**
+		 * Filter a single Corestarter nested option value.
+		 *
+		 * @param mixed  $value  The option value.
+		 * @param string $key    The top-level option key.
+		 * @param string $subkey The sub-key.
+		 */
+		return apply_filters( 'corestarter_option', $value, $key, $subkey );
 	}
 
-	return $cache[ $key ];
+	/**
+	 * Filter a single Corestarter option value.
+	 *
+	 * Child themes and plugins can use this to override any option without
+	 * touching the database or the admin UI.
+	 *
+	 * Example — force the primary color to red:
+	 *   add_filter( 'corestarter_option', function( $value, $key ) {
+	 *       return 'primary_color' === $key ? '#dc2626' : $value;
+	 *   }, 10, 2 );
+	 *
+	 * @param mixed  $value The option value.
+	 * @param string $key   The option key.
+	 * @param null   $subkey Always null at this point.
+	 */
+	return apply_filters( 'corestarter_option', $cache[ $key ], $key, null );
 }
 
 /**

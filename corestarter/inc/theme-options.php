@@ -195,9 +195,13 @@ function corestarter_sanitize_options( $input ) {
 
 	// Layout.
 	$clean['container_type']  = isset( $input['container_type'] ) && in_array( $input['container_type'], array( 'fixed', 'full' ), true ) ? $input['container_type'] : 'fixed';
-	$clean['container_width'] = isset( $input['container_width'] ) ? absint( $input['container_width'] ) : 1200;
-	$clean['container_width'] = max( 960, min( 1600, $clean['container_width'] ) );
+	$clean['container_width'] = isset( $input['container_width'] ) ? absint( $input['container_width'] ) : 1440;
+	$clean['container_width'] = max( 960, min( 1920, $clean['container_width'] ) );
 	$clean['sidebar_position'] = isset( $input['sidebar_position'] ) && in_array( $input['sidebar_position'], array( 'right', 'left', 'none' ), true ) ? $input['sidebar_position'] : 'right';
+
+	// WooCommerce.
+	$clean['products_per_page'] = isset( $input['products_per_page'] ) ? absint( $input['products_per_page'] ) : 12;
+	$clean['products_per_page'] = max( 1, min( 100, $clean['products_per_page'] ) );
 
 	// Typography.
 	$clean['typography'] = array();
@@ -445,8 +449,8 @@ function corestarter_options_page_html() {
 						<td>
 							<input type="number" name="corestarter_options[container_width]"
 								   value="<?php echo esc_attr( $opts['container_width'] ); ?>"
-								   min="960" max="1600" step="10" class="small-text">
-							<p class="description"><?php esc_html_e( 'Value between 960 and 1600 pixels.', 'corestarter' ); ?></p>
+								   min="960" max="1920" step="10" class="small-text">
+							<p class="description"><?php esc_html_e( 'Value between 960 and 1920 pixels. Default: 1440px.', 'corestarter' ); ?></p>
 						</td>
 					</tr>
 					<tr>
@@ -459,6 +463,17 @@ function corestarter_options_page_html() {
 							</select>
 						</td>
 					</tr>
+					<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Products Per Page', 'corestarter' ); ?></th>
+						<td>
+							<input type="number" name="corestarter_options[products_per_page]"
+								   value="<?php echo esc_attr( isset( $opts['products_per_page'] ) ? $opts['products_per_page'] : 12 ); ?>"
+								   min="1" max="100" step="1" class="small-text">
+							<p class="description"><?php esc_html_e( 'Number of products shown per page on the shop and category archive pages. Default: 12.', 'corestarter' ); ?></p>
+						</td>
+					</tr>
+					<?php endif; ?>
 				</table>
 			</div>
 

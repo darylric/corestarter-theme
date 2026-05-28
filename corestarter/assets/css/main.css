@@ -15,7 +15,7 @@
 	--cs-secondary: #1e40af;
 	--cs-header-bg: #ffffff;
 	--cs-footer-bg: #1f2937;
-	--cs-container-width: 1200px;
+	--cs-container-width: 1440px;
 
 	/* Neutral palette */
 	--cs-text: #1f2937;
@@ -1028,13 +1028,25 @@ a:focus {
    Responsive
    ========================================================================== */
 
-/* --- Large Desktop → Desktop ------------------------------------------- */
+/* --- Full Desktop → Large Desktop (1440px first breakpoint) ------------- */
+@media (max-width: 1440px) {
+	:root {
+		--cs-type-scale: 0.97;
+	}
+}
+
+/* --- Large Desktop → Desktop (1200px) ---------------------------------- */
 @media (max-width: 1200px) {
 	:root {
-		--cs-type-scale: 0.95;
+		--cs-type-scale: 0.93;
+		--cs-container-pad: 1.5rem;
 	}
 
 	.posts-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.footer-widgets-grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
 }

@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Define theme constants.
  */
-define( 'CORESTARTER_VERSION', '1.0.0' );
+define( 'CORESTARTER_VERSION', '1.1.0' );
 define( 'CORESTARTER_DIR', get_template_directory() );
 define( 'CORESTARTER_URI', get_template_directory_uri() );
 
@@ -23,9 +23,9 @@ define( 'CORESTARTER_URI', get_template_directory_uri() );
 function corestarter_setup() {
 	global $content_width;
 
-	// Set content width.
+	// Set content width (matches the default container width of 1440px).
 	if ( ! isset( $content_width ) ) {
-		$content_width = 1200;
+		$content_width = 1440;
 	}
 
 	// Make theme available for translation.
@@ -78,8 +78,32 @@ function corestarter_setup() {
 
 	// Add support for editor styles.
 	add_theme_support( 'editor-styles' );
+
+	// Register editor stylesheet so block editor matches front end.
+	add_editor_style( 'editor-style.css' );
 }
 add_action( 'after_setup_theme', 'corestarter_setup' );
+
+/**
+ * Register custom image sizes for the theme's layout.
+ *
+ * Ensures WordPress generates correctly-cropped images instead of
+ * relying on CSS scaling, which improves LCP and reduces bandwidth.
+ */
+function corestarter_add_image_sizes() {
+	// Card thumbnail — used in archive/blog post cards (16:9).
+	add_image_size( 'corestarter-card', 780, 439, true );
+
+	// Wide content image — single post featured image, no sidebar.
+	add_image_size( 'corestarter-wide', 1200, 675, true );
+
+	// Sidebar-constrained — single post featured image with sidebar.
+	add_image_size( 'corestarter-medium', 780, 500, true );
+
+	// Square — used for author avatars and profile thumbnails.
+	add_image_size( 'corestarter-square', 300, 300, true );
+}
+add_action( 'after_setup_theme', 'corestarter_add_image_sizes' );
 
 /**
  * Register widget areas.
