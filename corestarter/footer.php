@@ -6,6 +6,8 @@
  * @since   1.0.0
  */
 
+defined( 'ABSPATH' ) || exit;
+
 $footer_text = corestarter_get_option( 'footer_text' );
 ?>
 		</div><!-- .container -->

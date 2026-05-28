@@ -6,6 +6,7 @@
  * @since   1.0.0
  */
 
+defined( 'ABSPATH' ) || exit;
 ?>
 <form role="search" method="get" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 	<label>

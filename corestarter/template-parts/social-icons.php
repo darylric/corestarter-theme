@@ -8,6 +8,8 @@
  * @since   1.1.0
  */
 
+defined( 'ABSPATH' ) || exit;
+
 $social_icons = corestarter_get_option( 'social_icons' );
 
 if ( empty( $social_icons ) || ! is_array( $social_icons ) ) {

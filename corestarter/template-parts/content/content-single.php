@@ -6,6 +6,7 @@
  * @since   1.0.0
  */
 
+defined( 'ABSPATH' ) || exit;
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>

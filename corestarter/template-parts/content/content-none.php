@@ -6,6 +6,7 @@
  * @since   1.0.0
  */
 
+defined( 'ABSPATH' ) || exit;
 ?>
 
 <section class="no-results not-found">
