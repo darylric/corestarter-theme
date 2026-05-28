@@ -240,6 +240,84 @@ a:focus {
 }
 
 /* ==========================================================================
+   Header Icons & Search Dropdown
+   ========================================================================== */
+
+.header-icons {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	flex-shrink: 0;
+	position: relative;
+}
+
+.header-search-toggle {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--cs-text);
+	padding: 0.5rem;
+	background: none;
+	border: none;
+	cursor: pointer;
+	border-radius: var(--cs-radius);
+	transition: color var(--cs-transition), background-color var(--cs-transition);
+}
+
+.header-search-toggle:hover,
+.header-search-toggle:focus-visible {
+	color: var(--cs-primary);
+	background-color: var(--cs-bg-alt);
+}
+
+/* Search dropdown — hidden by default, shown via JS adding .is-active */
+.header-search-dropdown {
+	display: none;
+	position: absolute;
+	right: 0;
+	top: calc(100% + 0.5rem);
+	width: 320px;
+	background: var(--cs-bg);
+	border: 1px solid var(--cs-border);
+	border-radius: var(--cs-radius);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	z-index: 1001;
+	padding: 1rem;
+}
+
+.header-search-dropdown.is-active {
+	display: block;
+}
+
+.header-search-dropdown .search-form {
+	display: flex;
+	max-width: 100%;
+	gap: 0;
+}
+
+.header-search-dropdown .search-field {
+	flex: 1;
+	padding: 0.5rem 0.875rem;
+	border: 1px solid var(--cs-border);
+	border-right: none;
+	border-radius: var(--cs-radius) 0 0 var(--cs-radius);
+	font-family: inherit;
+	font-size: 0.9375rem;
+}
+
+.header-search-dropdown .search-field:focus {
+	outline: none;
+	border-color: var(--cs-primary);
+	box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.header-search-dropdown .search-submit {
+	flex-shrink: 0;
+	border-radius: 0 var(--cs-radius) var(--cs-radius) 0;
+}
+
+/* ==========================================================================
    Navigation
    ========================================================================== */
 
@@ -1191,6 +1269,15 @@ a:focus {
 		width: 100vw;
 		margin-left: calc(-1 * var(--cs-container-pad));
 		margin-right: calc(-1 * var(--cs-container-pad));
+	}
+
+	/* Search dropdown — full-width on mobile */
+	.header-search-dropdown {
+		position: fixed;
+		left: var(--cs-container-pad);
+		right: var(--cs-container-pad);
+		top: auto;
+		width: auto;
 	}
 
 	/* Forms — prevent iOS zoom on focus */

@@ -9,19 +9,11 @@
  */
 
 /* ==========================================================================
-   Header Icons Container
+   WooCommerce Header Icons (Account & Cart)
+   Base icon button styles for search are in main.css so they always load.
    ========================================================================== */
 
-.header-icons {
-	display: flex;
-	align-items: center;
-	gap: 0.25rem;
-	flex-shrink: 0;
-	position: relative;
-}
-
-/* Shared icon button / link base */
-.header-search-toggle,
+/* Account & cart icon buttons */
 .header-account-link,
 .header-cart-link {
 	position: relative;
@@ -38,8 +30,6 @@
 	text-decoration: none;
 }
 
-.header-search-toggle:hover,
-.header-search-toggle:focus-visible,
 .header-account-link:hover,
 .header-account-link:focus-visible,
 .header-cart-link:hover,
@@ -237,52 +227,6 @@
 }
 
 /* ==========================================================================
-   Search Dropdown
-   ========================================================================== */
-
-.header-search-dropdown {
-	display: none;
-	position: absolute;
-	right: 0;
-	top: 100%;
-	width: 320px;
-	background: #fff;
-	border: 1px solid var(--cs-border);
-	border-radius: var(--cs-radius);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-	z-index: 1000;
-	padding: 1rem;
-}
-
-.header-search-dropdown.is-active {
-	display: block;
-}
-
-.header-search-dropdown .search-form {
-	display: flex;
-	gap: 0.5rem;
-}
-
-.header-search-dropdown .search-field {
-	flex: 1;
-	padding: 0.5rem 0.75rem;
-	border: 1px solid var(--cs-border);
-	border-radius: var(--cs-radius);
-	font-family: inherit;
-	font-size: 0.9375rem;
-}
-
-.header-search-dropdown .search-field:focus {
-	outline: none;
-	border-color: var(--cs-primary);
-	box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
-}
-
-.header-search-dropdown .search-submit {
-	flex-shrink: 0;
-}
-
-/* ==========================================================================
    Mobile Responsive
    ========================================================================== */
 
@@ -290,13 +234,5 @@
 	/* Hide mini-cart dropdown on mobile — link navigates to cart page */
 	.header-cart-dropdown {
 		display: none !important;
-	}
-
-	.header-search-dropdown {
-		position: fixed;
-		left: 1rem;
-		right: 1rem;
-		top: auto;
-		width: auto;
 	}
 }
