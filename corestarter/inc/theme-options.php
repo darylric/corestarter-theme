@@ -299,12 +299,12 @@ function corestarter_options_page_html() {
 		return;
 	}
 
-	$opts         = get_option( 'corestarter_options', array() );
-	$defaults     = corestarter_get_defaults();
-	$opts         = wp_parse_args( $opts, $defaults );
-	$google_fonts = corestarter_get_google_fonts();
-	$system_fonts = corestarter_get_system_fonts();
-	$typo_elements = array(
+	$opts           = get_option( 'corestarter_options', array() );
+	$defaults       = corestarter_get_defaults();
+	$opts           = wp_parse_args( $opts, $defaults );
+	$google_fonts   = corestarter_get_google_fonts();
+	$system_fonts   = corestarter_get_system_fonts();
+	$typo_elements  = array(
 		'h1'   => 'Heading 1 (H1)',
 		'h2'   => 'Heading 2 (H2)',
 		'h3'   => 'Heading 3 (H3)',
@@ -317,29 +317,41 @@ function corestarter_options_page_html() {
 	);
 	$weight_options = array( '100', '200', '300', '400', '500', '600', '700', '800', '900' );
 	$tabs = array(
-		'general'     => esc_html__( 'General', 'corestarter' ),
-		'header'      => esc_html__( 'Header', 'corestarter' ),
-		'layout'      => esc_html__( 'Layout', 'corestarter' ),
-		'typography'  => esc_html__( 'Typography', 'corestarter' ),
-		'colors'      => esc_html__( 'Colors', 'corestarter' ),
-		'social'      => esc_html__( 'Social', 'corestarter' ),
-		'footer'      => esc_html__( 'Footer', 'corestarter' ),
-		'tracking'    => esc_html__( 'Tracking & Integrations', 'corestarter' ),
-		'shortcodes'  => esc_html__( 'Shortcodes', 'corestarter' ),
-		'custom-code' => esc_html__( 'Custom Code', 'corestarter' ),
+		'general'     => array( 'label' => __( 'General', 'corestarter' ),     'icon' => 'dashicons-admin-home' ),
+		'header'      => array( 'label' => __( 'Header', 'corestarter' ),      'icon' => 'dashicons-align-center' ),
+		'layout'      => array( 'label' => __( 'Layout', 'corestarter' ),      'icon' => 'dashicons-layout' ),
+		'typography'  => array( 'label' => __( 'Typography', 'corestarter' ),  'icon' => 'dashicons-editor-textcolor' ),
+		'colors'      => array( 'label' => __( 'Colors', 'corestarter' ),      'icon' => 'dashicons-admin-appearance' ),
+		'social'      => array( 'label' => __( 'Social', 'corestarter' ),      'icon' => 'dashicons-share' ),
+		'footer'      => array( 'label' => __( 'Footer', 'corestarter' ),      'icon' => 'dashicons-admin-links' ),
+		'tracking'    => array( 'label' => __( 'Tracking', 'corestarter' ),    'icon' => 'dashicons-chart-line' ),
+		'shortcodes'  => array( 'label' => __( 'Shortcodes', 'corestarter' ),  'icon' => 'dashicons-shortcode' ),
+		'custom-code' => array( 'label' => __( 'Custom Code', 'corestarter' ), 'icon' => 'dashicons-editor-code' ),
 	);
+	$theme_version = defined( 'CORESTARTER_VERSION' ) ? CORESTARTER_VERSION : '1.0';
 	?>
 	<div class="wrap cs-options-wrap">
-		<h1><?php esc_html_e( 'Corestarter Theme Options', 'corestarter' ); ?></h1>
+
+		<div class="cs-page-header">
+			<div class="cs-page-header-icon">
+				<span class="dashicons dashicons-admin-customizer"></span>
+			</div>
+			<div class="cs-page-header-text">
+				<h1><?php esc_html_e( 'Corestarter Theme Options', 'corestarter' ); ?></h1>
+				<p><?php esc_html_e( 'Configure appearance, typography, integrations, and more.', 'corestarter' ); ?></p>
+			</div>
+			<span class="cs-version-badge">v<?php echo esc_html( $theme_version ); ?></span>
+		</div>
 
 		<?php settings_errors( 'corestarter_options' ); ?>
 
 		<nav class="nav-tab-wrapper cs-nav-tabs">
-			<?php foreach ( $tabs as $slug => $label ) : ?>
+			<?php foreach ( $tabs as $slug => $tab ) : ?>
 				<a href="#tab-<?php echo esc_attr( $slug ); ?>"
 				   class="nav-tab<?php echo 'general' === $slug ? ' nav-tab-active' : ''; ?>"
 				   data-tab="tab-<?php echo esc_attr( $slug ); ?>">
-					<?php echo esc_html( $label ); ?>
+					<span class="dashicons <?php echo esc_attr( $tab['icon'] ); ?>"></span>
+					<span class="tab-label"><?php echo esc_html( $tab['label'] ); ?></span>
 				</a>
 			<?php endforeach; ?>
 		</nav>
@@ -351,560 +363,692 @@ function corestarter_options_page_html() {
 			     General Tab
 			     ============================================================ -->
 			<div id="tab-general" class="cs-tab-content active">
-				<h2><?php esc_html_e( 'General Settings', 'corestarter' ); ?></h2>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Site Logo', 'corestarter' ); ?></th>
-						<td>
-							<div class="cs-media-field">
-								<input type="hidden" name="corestarter_options[logo_id]"
-									   id="cs-logo-id"
-									   value="<?php echo esc_attr( $opts['logo_id'] ); ?>">
-								<div class="cs-media-preview" id="cs-logo-preview">
-									<?php if ( ! empty( $opts['logo_url'] ) ) : ?>
-										<img src="<?php echo esc_url( $opts['logo_url'] ); ?>" alt="">
-									<?php endif; ?>
-								</div>
-								<button type="button" class="button cs-upload-btn" data-target="cs-logo"><?php esc_html_e( 'Upload Logo', 'corestarter' ); ?></button>
-								<button type="button" class="button cs-remove-btn" data-target="cs-logo"
-										style="<?php echo empty( $opts['logo_url'] ) ? 'display:none;' : ''; ?>">
-									<?php esc_html_e( 'Remove', 'corestarter' ); ?>
-								</button>
-								<p class="description"><?php esc_html_e( 'Accepts SVG, PNG, JPG, WEBP, and other modern image formats.', 'corestarter' ); ?></p>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Site Title & Description', 'corestarter' ); ?></th>
-						<td>
-							<label>
-								<input type="checkbox" name="corestarter_options[hide_site_title]"
-									   value="1" <?php checked( $opts['hide_site_title'] ); ?>>
-								<?php esc_html_e( 'Hide Site Title', 'corestarter' ); ?>
-							</label>
-							<br>
-							<label>
-								<input type="checkbox" name="corestarter_options[hide_site_description]"
-									   value="1" <?php checked( $opts['hide_site_description'] ); ?>>
-								<?php esc_html_e( 'Hide Site Description', 'corestarter' ); ?>
-							</label>
-						</td>
-					</tr>
-				</table>
+				<div class="cs-tab-inner">
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-id"></span>
+							<div><h3><?php esc_html_e( 'Site Identity', 'corestarter' ); ?></h3></div>
+						</div>
+						<div class="cs-section-body">
+							<table class="form-table">
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Site Logo', 'corestarter' ); ?></th>
+									<td>
+										<div class="cs-media-field">
+											<input type="hidden" name="corestarter_options[logo_id]"
+												   id="cs-logo-id"
+												   value="<?php echo esc_attr( $opts['logo_id'] ); ?>">
+											<div class="cs-media-preview" id="cs-logo-preview">
+												<?php if ( ! empty( $opts['logo_url'] ) ) : ?>
+													<img src="<?php echo esc_url( $opts['logo_url'] ); ?>" alt="">
+												<?php endif; ?>
+											</div>
+											<button type="button" class="button cs-upload-btn" data-target="cs-logo"><?php esc_html_e( 'Upload Logo', 'corestarter' ); ?></button>
+											<button type="button" class="button cs-remove-btn" data-target="cs-logo"
+													style="<?php echo empty( $opts['logo_url'] ) ? 'display:none;' : ''; ?>">
+												<?php esc_html_e( 'Remove', 'corestarter' ); ?>
+											</button>
+											<p class="description"><?php esc_html_e( 'Accepts SVG, PNG, JPG, WEBP, and other modern image formats.', 'corestarter' ); ?></p>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Site Title & Description', 'corestarter' ); ?></th>
+									<td>
+										<label>
+											<input type="checkbox" name="corestarter_options[hide_site_title]"
+												   value="1" <?php checked( $opts['hide_site_title'] ); ?>>
+											<?php esc_html_e( 'Hide Site Title', 'corestarter' ); ?>
+										</label>
+										<br>
+										<label>
+											<input type="checkbox" name="corestarter_options[hide_site_description]"
+												   value="1" <?php checked( $opts['hide_site_description'] ); ?>>
+											<?php esc_html_e( 'Hide Site Description', 'corestarter' ); ?>
+										</label>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+				</div>
 			</div>
 
 			<!-- ============================================================
 			     Header Tab
 			     ============================================================ -->
 			<div id="tab-header" class="cs-tab-content">
-				<h2><?php esc_html_e( 'Header Settings', 'corestarter' ); ?></h2>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Sticky Header', 'corestarter' ); ?></th>
-						<td>
-							<label>
-								<input type="checkbox" name="corestarter_options[sticky_header]"
-									   value="1" <?php checked( $opts['sticky_header'] ); ?>>
-								<?php esc_html_e( 'Enable sticky header on scroll', 'corestarter' ); ?>
-							</label>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Header Background', 'corestarter' ); ?></th>
-						<td>
-							<input type="text" name="corestarter_options[header_bg_color]"
-								   value="<?php echo esc_attr( $opts['header_bg_color'] ); ?>"
-								   class="cs-color-picker" data-default-color="<?php echo esc_attr( $defaults['header_bg_color'] ); ?>">
-						</td>
-					</tr>
-				</table>
+				<div class="cs-tab-inner">
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-menu-alt"></span>
+							<div><h3><?php esc_html_e( 'Behavior', 'corestarter' ); ?></h3></div>
+						</div>
+						<div class="cs-section-body">
+							<table class="form-table">
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Sticky Header', 'corestarter' ); ?></th>
+									<td>
+										<label>
+											<input type="checkbox" name="corestarter_options[sticky_header]"
+												   value="1" <?php checked( $opts['sticky_header'] ); ?>>
+											<?php esc_html_e( 'Enable sticky header on scroll', 'corestarter' ); ?>
+										</label>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+					</div>
 			</div>
 
 			<!-- ============================================================
 			     Layout Tab
 			     ============================================================ -->
 			<div id="tab-layout" class="cs-tab-content">
-				<h2><?php esc_html_e( 'Layout Settings', 'corestarter' ); ?></h2>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Container Type', 'corestarter' ); ?></th>
-						<td>
-							<fieldset>
-								<label>
-									<input type="radio" name="corestarter_options[container_type]"
-										   value="fixed" <?php checked( $opts['container_type'], 'fixed' ); ?>>
-									<?php esc_html_e( 'Fixed Width', 'corestarter' ); ?>
-								</label>
-								<br>
-								<label>
-									<input type="radio" name="corestarter_options[container_type]"
-										   value="full" <?php checked( $opts['container_type'], 'full' ); ?>>
-									<?php esc_html_e( 'Full Width', 'corestarter' ); ?>
-								</label>
-							</fieldset>
-						</td>
-					</tr>
-					<tr class="cs-container-width-row" style="<?php echo 'full' === $opts['container_type'] ? 'display:none;' : ''; ?>">
-						<th scope="row"><?php esc_html_e( 'Container Width (px)', 'corestarter' ); ?></th>
-						<td>
-							<input type="number" name="corestarter_options[container_width]"
-								   value="<?php echo esc_attr( $opts['container_width'] ); ?>"
-								   min="960" max="1920" step="10" class="small-text">
-							<p class="description"><?php esc_html_e( 'Value between 960 and 1920 pixels. Default: 1440px.', 'corestarter' ); ?></p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Sidebar Position', 'corestarter' ); ?></th>
-						<td>
-							<select name="corestarter_options[sidebar_position]">
-								<option value="right" <?php selected( $opts['sidebar_position'], 'right' ); ?>><?php esc_html_e( 'Right', 'corestarter' ); ?></option>
-								<option value="left" <?php selected( $opts['sidebar_position'], 'left' ); ?>><?php esc_html_e( 'Left', 'corestarter' ); ?></option>
-								<option value="none" <?php selected( $opts['sidebar_position'], 'none' ); ?>><?php esc_html_e( 'No Sidebar', 'corestarter' ); ?></option>
-							</select>
-						</td>
-					</tr>
-					<?php if ( class_exists( 'WooCommerce' ) ) : ?>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Products Per Page', 'corestarter' ); ?></th>
-						<td>
-							<input type="number" name="corestarter_options[products_per_page]"
-								   value="<?php echo esc_attr( isset( $opts['products_per_page'] ) ? $opts['products_per_page'] : 12 ); ?>"
-								   min="1" max="100" step="1" class="small-text">
-							<p class="description"><?php esc_html_e( 'Number of products shown per page on the shop and category archive pages. Default: 12.', 'corestarter' ); ?></p>
-						</td>
-					</tr>
-					<?php endif; ?>
-				</table>
+				<div class="cs-tab-inner">
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-screenoptions"></span>
+							<div><h3><?php esc_html_e( 'Container', 'corestarter' ); ?></h3></div>
+						</div>
+						<div class="cs-section-body">
+							<table class="form-table">
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Container Type', 'corestarter' ); ?></th>
+									<td>
+										<fieldset>
+											<label>
+												<input type="radio" name="corestarter_options[container_type]"
+													   value="fixed" <?php checked( $opts['container_type'], 'fixed' ); ?>>
+												<?php esc_html_e( 'Fixed Width', 'corestarter' ); ?>
+											</label>
+											<br>
+											<label>
+												<input type="radio" name="corestarter_options[container_type]"
+													   value="full" <?php checked( $opts['container_type'], 'full' ); ?>>
+												<?php esc_html_e( 'Full Width', 'corestarter' ); ?>
+											</label>
+										</fieldset>
+									</td>
+								</tr>
+								<tr class="cs-container-width-row" style="<?php echo 'full' === $opts['container_type'] ? 'display:none;' : ''; ?>">
+									<th scope="row"><?php esc_html_e( 'Container Width (px)', 'corestarter' ); ?></th>
+									<td>
+										<input type="number" name="corestarter_options[container_width]"
+											   value="<?php echo esc_attr( $opts['container_width'] ); ?>"
+											   min="960" max="1920" step="10" class="small-text">
+										<p class="description"><?php esc_html_e( 'Value between 960 and 1920 pixels. Default: 1440px.', 'corestarter' ); ?></p>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-columns"></span>
+							<div><h3><?php esc_html_e( 'Content Layout', 'corestarter' ); ?></h3></div>
+						</div>
+						<div class="cs-section-body">
+							<table class="form-table">
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Sidebar Position', 'corestarter' ); ?></th>
+									<td>
+										<select name="corestarter_options[sidebar_position]">
+											<option value="right" <?php selected( $opts['sidebar_position'], 'right' ); ?>><?php esc_html_e( 'Right', 'corestarter' ); ?></option>
+											<option value="left" <?php selected( $opts['sidebar_position'], 'left' ); ?>><?php esc_html_e( 'Left', 'corestarter' ); ?></option>
+											<option value="none" <?php selected( $opts['sidebar_position'], 'none' ); ?>><?php esc_html_e( 'No Sidebar', 'corestarter' ); ?></option>
+										</select>
+									</td>
+								</tr>
+								<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Products Per Page', 'corestarter' ); ?></th>
+									<td>
+										<input type="number" name="corestarter_options[products_per_page]"
+											   value="<?php echo esc_attr( isset( $opts['products_per_page'] ) ? $opts['products_per_page'] : 12 ); ?>"
+											   min="1" max="100" step="1" class="small-text">
+										<p class="description"><?php esc_html_e( 'Number of products shown per page on the shop and category archive pages. Default: 12.', 'corestarter' ); ?></p>
+									</td>
+								</tr>
+								<?php endif; ?>
+							</table>
+						</div>
+					</div>
+
+				</div>
 			</div>
 
 			<!-- ============================================================
 			     Typography Tab
 			     ============================================================ -->
 			<div id="tab-typography" class="cs-tab-content">
-				<h2><?php esc_html_e( 'Typography Settings', 'corestarter' ); ?></h2>
-				<p class="description"><?php esc_html_e( 'Leave fields empty to use the theme defaults. Google Fonts are loaded automatically when selected.', 'corestarter' ); ?></p>
-				<table class="form-table cs-typography-table">
-					<thead>
-						<tr>
-							<th><?php esc_html_e( 'Element', 'corestarter' ); ?></th>
-							<th><?php esc_html_e( 'Font Family', 'corestarter' ); ?></th>
-							<th><?php esc_html_e( 'Size (px)', 'corestarter' ); ?></th>
-							<th><?php esc_html_e( 'Weight', 'corestarter' ); ?></th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ( $typo_elements as $el => $label ) :
-							$typo = isset( $opts['typography'][ $el ] ) ? $opts['typography'][ $el ] : $defaults['typography'][ $el ];
+				<div class="cs-tab-inner">
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-editor-textcolor"></span>
+							<div>
+								<h3><?php esc_html_e( 'Font Settings', 'corestarter' ); ?></h3>
+								<p><?php esc_html_e( 'Leave fields empty to use theme defaults. Google Fonts load automatically when selected.', 'corestarter' ); ?></p>
+							</div>
+						</div>
+						<div class="cs-section-body" style="padding:0;">
+							<table class="cs-typography-table">
+								<thead>
+									<tr>
+										<th style="padding-left:20px;"><?php esc_html_e( 'Element', 'corestarter' ); ?></th>
+										<th><?php esc_html_e( 'Font Family', 'corestarter' ); ?></th>
+										<th><?php esc_html_e( 'Size (px)', 'corestarter' ); ?></th>
+										<th style="padding-right:20px;"><?php esc_html_e( 'Weight', 'corestarter' ); ?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ( $typo_elements as $el => $label ) :
+										$typo = isset( $opts['typography'][ $el ] ) ? $opts['typography'][ $el ] : $defaults['typography'][ $el ];
+										?>
+										<tr>
+											<td style="padding-left:20px;"><strong><?php echo esc_html( $label ); ?></strong></td>
+											<td>
+												<select name="corestarter_options[typography][<?php echo esc_attr( $el ); ?>][family]" class="cs-font-select">
+													<option value=""><?php esc_html_e( '— Inherit / Default —', 'corestarter' ); ?></option>
+													<optgroup label="<?php esc_attr_e( 'System Fonts', 'corestarter' ); ?>">
+														<?php foreach ( $system_fonts as $name => $stack ) : ?>
+															<option value="<?php echo esc_attr( $name ); ?>" <?php selected( $typo['family'], $name ); ?>>
+																<?php echo esc_html( $name ); ?>
+															</option>
+														<?php endforeach; ?>
+													</optgroup>
+													<optgroup label="<?php esc_attr_e( 'Google Fonts', 'corestarter' ); ?>">
+														<?php foreach ( $google_fonts as $font ) : ?>
+															<option value="<?php echo esc_attr( $font ); ?>" <?php selected( $typo['family'], $font ); ?>>
+																<?php echo esc_html( $font ); ?>
+															</option>
+														<?php endforeach; ?>
+													</optgroup>
+												</select>
+											</td>
+											<td>
+												<input type="number"
+													   name="corestarter_options[typography][<?php echo esc_attr( $el ); ?>][size]"
+													   value="<?php echo esc_attr( $typo['size'] ); ?>"
+													   min="8" max="120" step="1" class="small-text"
+													   placeholder="—">
+											</td>
+											<td style="padding-right:20px;">
+												<select name="corestarter_options[typography][<?php echo esc_attr( $el ); ?>][weight]">
+													<option value=""><?php esc_html_e( '— Default —', 'corestarter' ); ?></option>
+													<?php foreach ( $weight_options as $w ) : ?>
+														<option value="<?php echo esc_attr( $w ); ?>" <?php selected( $typo['weight'], $w ); ?>>
+															<?php echo esc_html( $w ); ?>
+														</option>
+													<?php endforeach; ?>
+												</select>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-smartphone"></span>
+							<div>
+								<h3><?php esc_html_e( 'Responsive Scaling', 'corestarter' ); ?></h3>
+								<p><?php esc_html_e( '1.0 = same as desktop &mdash; 0.75 = 25% smaller on that breakpoint.', 'corestarter' ); ?></p>
+							</div>
+						</div>
+						<div class="cs-section-body">
+							<?php
+							$scales       = isset( $opts['responsive_scales'] ) ? $opts['responsive_scales'] : $defaults['responsive_scales'];
+							$scale_fields = array(
+								'tablet_heading' => __( 'Tablet — Heading Scale', 'corestarter' ),
+								'tablet_body'    => __( 'Tablet — Body Text Scale', 'corestarter' ),
+								'mobile_heading' => __( 'Mobile — Heading Scale', 'corestarter' ),
+								'mobile_body'    => __( 'Mobile — Body Text Scale', 'corestarter' ),
+							);
 							?>
-							<tr>
-								<td><strong><?php echo esc_html( $label ); ?></strong></td>
-								<td>
-									<select name="corestarter_options[typography][<?php echo esc_attr( $el ); ?>][family]" class="cs-font-select">
-										<option value=""><?php esc_html_e( '— Inherit / Default —', 'corestarter' ); ?></option>
-										<optgroup label="<?php esc_attr_e( 'System Fonts', 'corestarter' ); ?>">
-											<?php foreach ( $system_fonts as $name => $stack ) : ?>
-												<option value="<?php echo esc_attr( $name ); ?>" <?php selected( $typo['family'], $name ); ?>>
-													<?php echo esc_html( $name ); ?>
-												</option>
-											<?php endforeach; ?>
-										</optgroup>
-										<optgroup label="<?php esc_attr_e( 'Google Fonts', 'corestarter' ); ?>">
-											<?php foreach ( $google_fonts as $font ) : ?>
-												<option value="<?php echo esc_attr( $font ); ?>" <?php selected( $typo['family'], $font ); ?>>
-													<?php echo esc_html( $font ); ?>
-												</option>
-											<?php endforeach; ?>
-										</optgroup>
-									</select>
-								</td>
-								<td>
-									<input type="number"
-										   name="corestarter_options[typography][<?php echo esc_attr( $el ); ?>][size]"
-										   value="<?php echo esc_attr( $typo['size'] ); ?>"
-										   min="8" max="120" step="1" class="small-text"
-										   placeholder="—">
-								</td>
-								<td>
-									<select name="corestarter_options[typography][<?php echo esc_attr( $el ); ?>][weight]">
-										<option value=""><?php esc_html_e( '— Default —', 'corestarter' ); ?></option>
-										<?php foreach ( $weight_options as $w ) : ?>
-											<option value="<?php echo esc_attr( $w ); ?>" <?php selected( $typo['weight'], $w ); ?>>
-												<?php echo esc_html( $w ); ?>
-											</option>
-										<?php endforeach; ?>
-									</select>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
+							<table class="form-table">
+								<?php foreach ( $scale_fields as $field_key => $field_label ) :
+									$field_val = isset( $scales[ $field_key ] ) ? $scales[ $field_key ] : $defaults['responsive_scales'][ $field_key ];
+									?>
+									<tr>
+										<th scope="row"><?php echo esc_html( $field_label ); ?></th>
+										<td>
+											<div class="cs-scale-row">
+												<input type="range"
+													   name="corestarter_options[responsive_scales][<?php echo esc_attr( $field_key ); ?>]"
+													   value="<?php echo esc_attr( $field_val ); ?>"
+													   min="0.5" max="1" step="0.025"
+													   data-default="<?php echo esc_attr( $defaults['responsive_scales'][ $field_key ] ); ?>"
+													   oninput="this.nextElementSibling.textContent = this.value">
+												<span class="cs-scale-value"><?php echo esc_html( $field_val ); ?></span>
+											</div>
+										</td>
+									</tr>
+								<?php endforeach; ?>
+							</table>
+							<p>
+								<button type="button" class="button" id="cs-reset-scales"><?php esc_html_e( 'Reset to Defaults', 'corestarter' ); ?></button>
+							</p>
+							<script>
+							document.getElementById('cs-reset-scales').addEventListener('click', function() {
+								var sliders = this.closest('.cs-tab-content').querySelectorAll('input[type="range"][data-default]');
+								sliders.forEach(function(s) {
+									s.value = s.dataset.default;
+									s.nextElementSibling.textContent = s.dataset.default;
+								});
+							});
+							</script>
+						</div>
+					</div>
 
-				<h3 style="margin-top: 2rem;"><?php esc_html_e( 'Responsive Scaling', 'corestarter' ); ?></h3>
-				<p class="description"><?php esc_html_e( 'Controls how much text scales down on smaller screens. 1.0 = same as desktop, 0.75 = 25% smaller.', 'corestarter' ); ?></p>
-
-				<?php
-				$scales       = isset( $opts['responsive_scales'] ) ? $opts['responsive_scales'] : $defaults['responsive_scales'];
-				$scale_fields = array(
-					'tablet_heading' => __( 'Tablet — Heading Scale', 'corestarter' ),
-					'tablet_body'    => __( 'Tablet — Body Text Scale', 'corestarter' ),
-					'mobile_heading' => __( 'Mobile — Heading Scale', 'corestarter' ),
-					'mobile_body'    => __( 'Mobile — Body Text Scale', 'corestarter' ),
-				);
-				?>
-				<table class="form-table">
-					<?php foreach ( $scale_fields as $field_key => $field_label ) :
-						$field_val = isset( $scales[ $field_key ] ) ? $scales[ $field_key ] : $defaults['responsive_scales'][ $field_key ];
-						?>
-						<tr>
-							<th scope="row"><?php echo esc_html( $field_label ); ?></th>
-							<td>
-								<input type="range"
-									   name="corestarter_options[responsive_scales][<?php echo esc_attr( $field_key ); ?>]"
-									   value="<?php echo esc_attr( $field_val ); ?>"
-									   min="0.5" max="1" step="0.025"
-									   data-default="<?php echo esc_attr( $defaults['responsive_scales'][ $field_key ] ); ?>"
-									   oninput="this.nextElementSibling.textContent = this.value"
-									   style="vertical-align: middle; width: 220px;">
-								<span style="display: inline-block; min-width: 3em; text-align: center; font-weight: 600;"><?php echo esc_html( $field_val ); ?></span>
-							</td>
-						</tr>
-					<?php endforeach; ?>
-				</table>
-				<p>
-					<button type="button" class="button" id="cs-reset-scales"><?php esc_html_e( 'Reset to Defaults', 'corestarter' ); ?></button>
-				</p>
-				<script>
-				document.getElementById('cs-reset-scales').addEventListener('click', function() {
-					var sliders = this.closest('.cs-tab-content').querySelectorAll('input[type="range"][data-default]');
-					sliders.forEach(function(s) {
-						s.value = s.dataset.default;
-						s.nextElementSibling.textContent = s.dataset.default;
-					});
-				});
-				</script>
+				</div>
 			</div>
 
 			<!-- ============================================================
 			     Colors Tab
 			     ============================================================ -->
 			<div id="tab-colors" class="cs-tab-content">
-				<h2><?php esc_html_e( 'Color Settings', 'corestarter' ); ?></h2>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Primary Color', 'corestarter' ); ?></th>
-						<td>
-							<input type="text" name="corestarter_options[primary_color]"
-								   value="<?php echo esc_attr( $opts['primary_color'] ); ?>"
-								   class="cs-color-picker" data-default-color="<?php echo esc_attr( $defaults['primary_color'] ); ?>">
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Secondary Color', 'corestarter' ); ?></th>
-						<td>
-							<input type="text" name="corestarter_options[secondary_color]"
-								   value="<?php echo esc_attr( $opts['secondary_color'] ); ?>"
-								   class="cs-color-picker" data-default-color="<?php echo esc_attr( $defaults['secondary_color'] ); ?>">
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Header Background', 'corestarter' ); ?></th>
-						<td>
-							<input type="text" name="corestarter_options[header_bg_color]"
-								   value="<?php echo esc_attr( $opts['header_bg_color'] ); ?>"
-								   class="cs-color-picker" data-default-color="<?php echo esc_attr( $defaults['header_bg_color'] ); ?>">
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Footer Background', 'corestarter' ); ?></th>
-						<td>
-							<input type="text" name="corestarter_options[footer_bg_color]"
-								   value="<?php echo esc_attr( $opts['footer_bg_color'] ); ?>"
-								   class="cs-color-picker" data-default-color="<?php echo esc_attr( $defaults['footer_bg_color'] ); ?>">
-						</td>
-					</tr>
-				</table>
+				<div class="cs-tab-inner">
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-admin-appearance"></span>
+							<div><h3><?php esc_html_e( 'Brand Colors', 'corestarter' ); ?></h3></div>
+						</div>
+						<div class="cs-section-body">
+							<table class="form-table">
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Primary Color', 'corestarter' ); ?></th>
+									<td>
+										<input type="text" name="corestarter_options[primary_color]"
+											   value="<?php echo esc_attr( $opts['primary_color'] ); ?>"
+											   class="cs-color-picker" data-default-color="<?php echo esc_attr( $defaults['primary_color'] ); ?>">
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Secondary Color', 'corestarter' ); ?></th>
+									<td>
+										<input type="text" name="corestarter_options[secondary_color]"
+											   value="<?php echo esc_attr( $opts['secondary_color'] ); ?>"
+											   class="cs-color-picker" data-default-color="<?php echo esc_attr( $defaults['secondary_color'] ); ?>">
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-format-image"></span>
+							<div><h3><?php esc_html_e( 'Component Colors', 'corestarter' ); ?></h3></div>
+						</div>
+						<div class="cs-section-body">
+							<table class="form-table">
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Header Background', 'corestarter' ); ?></th>
+									<td>
+										<input type="text" name="corestarter_options[header_bg_color]"
+											   value="<?php echo esc_attr( $opts['header_bg_color'] ); ?>"
+											   class="cs-color-picker" data-default-color="<?php echo esc_attr( $defaults['header_bg_color'] ); ?>">
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Footer Background', 'corestarter' ); ?></th>
+									<td>
+										<input type="text" name="corestarter_options[footer_bg_color]"
+											   value="<?php echo esc_attr( $opts['footer_bg_color'] ); ?>"
+											   class="cs-color-picker" data-default-color="<?php echo esc_attr( $defaults['footer_bg_color'] ); ?>">
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+				</div>
 			</div>
 
 			<!-- ============================================================
 			     Social Tab
 			     ============================================================ -->
 			<div id="tab-social" class="cs-tab-content">
-				<h2><?php esc_html_e( 'Social Icons', 'corestarter' ); ?></h2>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Display Location', 'corestarter' ); ?></th>
-						<td>
-							<select name="corestarter_options[social_location]">
-								<option value="header" <?php selected( $opts['social_location'], 'header' ); ?>><?php esc_html_e( 'Header', 'corestarter' ); ?></option>
-								<option value="footer" <?php selected( $opts['social_location'], 'footer' ); ?>><?php esc_html_e( 'Footer', 'corestarter' ); ?></option>
-								<option value="both" <?php selected( $opts['social_location'], 'both' ); ?>><?php esc_html_e( 'Both', 'corestarter' ); ?></option>
-							</select>
-						</td>
-					</tr>
-				</table>
+				<div class="cs-tab-inner">
 
-				<div id="cs-social-repeater">
-					<?php
-					$social_icons = isset( $opts['social_icons'] ) ? $opts['social_icons'] : array();
-					if ( ! empty( $social_icons ) ) :
-						foreach ( $social_icons as $i => $item ) :
-							?>
-							<div class="cs-social-row" data-index="<?php echo esc_attr( $i ); ?>">
-								<div class="cs-social-row-inner">
-									<div class="cs-social-icon-field">
-										<input type="hidden"
-											   name="corestarter_options[social_icons][<?php echo esc_attr( $i ); ?>][icon_id]"
-											   class="cs-social-icon-id"
-											   value="<?php echo esc_attr( $item['icon_id'] ); ?>">
-										<div class="cs-media-preview cs-social-icon-preview">
-											<?php if ( ! empty( $item['icon_url'] ) ) : ?>
-												<img src="<?php echo esc_url( $item['icon_url'] ); ?>" alt="">
-											<?php endif; ?>
-										</div>
-										<button type="button" class="button cs-social-upload-btn"><?php esc_html_e( 'Upload Icon', 'corestarter' ); ?></button>
-										<button type="button" class="button cs-social-remove-icon-btn"
-												style="<?php echo empty( $item['icon_url'] ) ? 'display:none;' : ''; ?>">
-											<?php esc_html_e( 'Remove', 'corestarter' ); ?>
-										</button>
-									</div>
-									<div class="cs-social-link-field">
-										<label><?php esc_html_e( 'URL', 'corestarter' ); ?></label>
-										<input type="url"
-											   name="corestarter_options[social_icons][<?php echo esc_attr( $i ); ?>][link]"
-											   class="regular-text cs-social-link"
-											   value="<?php echo esc_url( $item['link'] ); ?>"
-											   placeholder="https://">
-									</div>
-									<div class="cs-social-newtab-field">
-										<label>
-											<input type="checkbox"
-												   name="corestarter_options[social_icons][<?php echo esc_attr( $i ); ?>][new_tab]"
-												   class="cs-social-newtab"
-												   value="1" <?php checked( ! empty( $item['new_tab'] ) ); ?>>
-											<?php esc_html_e( 'Open in new tab', 'corestarter' ); ?>
-										</label>
-									</div>
-									<div class="cs-social-actions">
-										<button type="button" class="button cs-social-remove-row">
-											<span class="dashicons dashicons-trash"></span>
-										</button>
-									</div>
-								</div>
-							</div>
-						<?php
-						endforeach;
-					endif;
-					?>
-				</div>
-
-				<!-- Hidden template row for JS cloning -->
-				<script type="text/html" id="tmpl-cs-social-row">
-					<div class="cs-social-row" data-index="__INDEX__">
-						<div class="cs-social-row-inner">
-							<div class="cs-social-icon-field">
-								<input type="hidden"
-									   name="corestarter_options[social_icons][__INDEX__][icon_id]"
-									   class="cs-social-icon-id"
-									   value="">
-								<div class="cs-media-preview cs-social-icon-preview"></div>
-								<button type="button" class="button cs-social-upload-btn"><?php esc_html_e( 'Upload Icon', 'corestarter' ); ?></button>
-								<button type="button" class="button cs-social-remove-icon-btn" style="display:none;">
-									<?php esc_html_e( 'Remove', 'corestarter' ); ?>
-								</button>
-							</div>
-							<div class="cs-social-link-field">
-								<label><?php esc_html_e( 'URL', 'corestarter' ); ?></label>
-								<input type="url"
-									   name="corestarter_options[social_icons][__INDEX__][link]"
-									   class="regular-text cs-social-link"
-									   value=""
-									   placeholder="https://">
-							</div>
-							<div class="cs-social-newtab-field">
-								<label>
-									<input type="checkbox"
-										   name="corestarter_options[social_icons][__INDEX__][new_tab]"
-										   class="cs-social-newtab"
-										   value="1" checked>
-									<?php esc_html_e( 'Open in new tab', 'corestarter' ); ?>
-								</label>
-							</div>
-							<div class="cs-social-actions">
-								<button type="button" class="button cs-social-remove-row">
-									<span class="dashicons dashicons-trash"></span>
-								</button>
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-share"></span>
+							<div>
+								<h3><?php esc_html_e( 'Social Icons', 'corestarter' ); ?></h3>
+								<p><?php esc_html_e( 'Upload custom icons and add links to your social profiles.', 'corestarter' ); ?></p>
 							</div>
 						</div>
-					</div>
-				</script>
+						<div class="cs-section-body">
+							<table class="form-table">
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Display Location', 'corestarter' ); ?></th>
+									<td>
+										<select name="corestarter_options[social_location]">
+											<option value="header" <?php selected( $opts['social_location'], 'header' ); ?>><?php esc_html_e( 'Header', 'corestarter' ); ?></option>
+											<option value="footer" <?php selected( $opts['social_location'], 'footer' ); ?>><?php esc_html_e( 'Footer', 'corestarter' ); ?></option>
+											<option value="both" <?php selected( $opts['social_location'], 'both' ); ?>><?php esc_html_e( 'Both', 'corestarter' ); ?></option>
+										</select>
+									</td>
+								</tr>
+							</table>
 
-				<p>
-					<button type="button" class="button button-secondary" id="cs-add-social">
-						<span class="dashicons dashicons-plus-alt2"></span>
-						<?php esc_html_e( 'Add Social Icon', 'corestarter' ); ?>
-					</button>
-				</p>
-				<p class="description"><?php esc_html_e( 'Upload custom icons (SVG, PNG, JPG, WEBP) and enter the link for each social profile.', 'corestarter' ); ?></p>
+							<div id="cs-social-repeater">
+								<?php
+								$social_icons = isset( $opts['social_icons'] ) ? $opts['social_icons'] : array();
+								if ( ! empty( $social_icons ) ) :
+									foreach ( $social_icons as $i => $item ) :
+										?>
+										<div class="cs-social-row" data-index="<?php echo esc_attr( $i ); ?>">
+											<div class="cs-social-row-inner">
+												<div class="cs-social-icon-field">
+													<input type="hidden"
+														   name="corestarter_options[social_icons][<?php echo esc_attr( $i ); ?>][icon_id]"
+														   class="cs-social-icon-id"
+														   value="<?php echo esc_attr( $item['icon_id'] ); ?>">
+													<div class="cs-media-preview cs-social-icon-preview">
+														<?php if ( ! empty( $item['icon_url'] ) ) : ?>
+															<img src="<?php echo esc_url( $item['icon_url'] ); ?>" alt="">
+														<?php endif; ?>
+													</div>
+													<button type="button" class="button cs-social-upload-btn"><?php esc_html_e( 'Upload Icon', 'corestarter' ); ?></button>
+													<button type="button" class="button cs-social-remove-icon-btn"
+															style="<?php echo empty( $item['icon_url'] ) ? 'display:none;' : ''; ?>">
+														<?php esc_html_e( 'Remove', 'corestarter' ); ?>
+													</button>
+												</div>
+												<div class="cs-social-link-field">
+													<label><?php esc_html_e( 'URL', 'corestarter' ); ?></label>
+													<input type="url"
+														   name="corestarter_options[social_icons][<?php echo esc_attr( $i ); ?>][link]"
+														   class="regular-text cs-social-link"
+														   value="<?php echo esc_url( $item['link'] ); ?>"
+														   placeholder="https://">
+												</div>
+												<div class="cs-social-newtab-field">
+													<label>
+														<input type="checkbox"
+															   name="corestarter_options[social_icons][<?php echo esc_attr( $i ); ?>][new_tab]"
+															   class="cs-social-newtab"
+															   value="1" <?php checked( ! empty( $item['new_tab'] ) ); ?>>
+														<?php esc_html_e( 'Open in new tab', 'corestarter' ); ?>
+													</label>
+												</div>
+												<div class="cs-social-actions">
+													<button type="button" class="button cs-social-remove-row">
+														<span class="dashicons dashicons-trash"></span>
+													</button>
+												</div>
+											</div>
+										</div>
+									<?php
+									endforeach;
+								endif;
+								?>
+							</div>
+
+							<!-- Hidden template row for JS cloning -->
+							<script type="text/html" id="tmpl-cs-social-row">
+								<div class="cs-social-row" data-index="__INDEX__">
+									<div class="cs-social-row-inner">
+										<div class="cs-social-icon-field">
+											<input type="hidden"
+												   name="corestarter_options[social_icons][__INDEX__][icon_id]"
+												   class="cs-social-icon-id"
+												   value="">
+											<div class="cs-media-preview cs-social-icon-preview"></div>
+											<button type="button" class="button cs-social-upload-btn"><?php esc_html_e( 'Upload Icon', 'corestarter' ); ?></button>
+											<button type="button" class="button cs-social-remove-icon-btn" style="display:none;">
+												<?php esc_html_e( 'Remove', 'corestarter' ); ?>
+											</button>
+										</div>
+										<div class="cs-social-link-field">
+											<label><?php esc_html_e( 'URL', 'corestarter' ); ?></label>
+											<input type="url"
+												   name="corestarter_options[social_icons][__INDEX__][link]"
+												   class="regular-text cs-social-link"
+												   value=""
+												   placeholder="https://">
+										</div>
+										<div class="cs-social-newtab-field">
+											<label>
+												<input type="checkbox"
+													   name="corestarter_options[social_icons][__INDEX__][new_tab]"
+													   class="cs-social-newtab"
+													   value="1" checked>
+												<?php esc_html_e( 'Open in new tab', 'corestarter' ); ?>
+											</label>
+										</div>
+										<div class="cs-social-actions">
+											<button type="button" class="button cs-social-remove-row">
+												<span class="dashicons dashicons-trash"></span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</script>
+
+							<p>
+								<button type="button" class="button button-secondary" id="cs-add-social">
+									<span class="dashicons dashicons-plus-alt2"></span>
+									<?php esc_html_e( 'Add Social Icon', 'corestarter' ); ?>
+								</button>
+							</p>
+						</div>
+					</div>
+
+				</div>
 			</div>
 
 			<!-- ============================================================
 			     Footer Tab
 			     ============================================================ -->
 			<div id="tab-footer" class="cs-tab-content">
-				<h2><?php esc_html_e( 'Footer Settings', 'corestarter' ); ?></h2>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Custom Footer Text', 'corestarter' ); ?></th>
-						<td>
-							<textarea name="corestarter_options[footer_text]"
-									  rows="4" class="large-text"><?php echo esc_textarea( $opts['footer_text'] ); ?></textarea>
-							<p class="description"><?php esc_html_e( 'HTML is allowed. Displays above the copyright line.', 'corestarter' ); ?></p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Footer Background', 'corestarter' ); ?></th>
-						<td>
-							<input type="text" name="corestarter_options[footer_bg_color]"
-								   value="<?php echo esc_attr( $opts['footer_bg_color'] ); ?>"
-								   class="cs-color-picker" data-default-color="<?php echo esc_attr( $defaults['footer_bg_color'] ); ?>">
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Back to Top', 'corestarter' ); ?></th>
-						<td>
-							<label>
-								<input type="checkbox" name="corestarter_options[back_to_top]"
-									   value="1" <?php checked( $opts['back_to_top'] ); ?>>
-								<?php esc_html_e( 'Show "Back to Top" button', 'corestarter' ); ?>
-							</label>
-						</td>
-					</tr>
-				</table>
+				<div class="cs-tab-inner">
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-editor-paragraph"></span>
+							<div><h3><?php esc_html_e( 'Footer Content', 'corestarter' ); ?></h3></div>
+						</div>
+						<div class="cs-section-body">
+							<table class="form-table">
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Custom Footer Text', 'corestarter' ); ?></th>
+									<td>
+										<textarea name="corestarter_options[footer_text]"
+												  rows="4" class="large-text"><?php echo esc_textarea( $opts['footer_text'] ); ?></textarea>
+										<p class="description"><?php esc_html_e( 'HTML is allowed. Displays above the copyright line.', 'corestarter' ); ?></p>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Back to Top', 'corestarter' ); ?></th>
+									<td>
+										<label>
+											<input type="checkbox" name="corestarter_options[back_to_top]"
+												   value="1" <?php checked( $opts['back_to_top'] ); ?>>
+											<?php esc_html_e( 'Show "Back to Top" button', 'corestarter' ); ?>
+										</label>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+					</div>
 			</div>
 
 			<!-- ============================================================
 			     Tracking & Integrations Tab
 			     ============================================================ -->
 			<div id="tab-tracking" class="cs-tab-content">
-				<h2><?php esc_html_e( 'Tracking & Integrations', 'corestarter' ); ?></h2>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'GA4 Measurement ID', 'corestarter' ); ?></th>
-						<td>
-							<input type="text" name="corestarter_options[ga4_id]"
-								   value="<?php echo esc_attr( $opts['ga4_id'] ); ?>"
-								   class="regular-text" placeholder="G-XXXXXXXXXX">
-							<p class="description"><?php esc_html_e( 'Enter your Google Analytics 4 Measurement ID. The tracking script is injected automatically.', 'corestarter' ); ?></p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'GTM Container ID', 'corestarter' ); ?></th>
-						<td>
-							<input type="text" name="corestarter_options[gtm_id]"
-								   value="<?php echo esc_attr( $opts['gtm_id'] ); ?>"
-								   class="regular-text" placeholder="GTM-XXXXXXX">
-							<p class="description"><?php esc_html_e( 'Enter your Google Tag Manager Container ID. Both the head snippet and body noscript fallback are injected automatically.', 'corestarter' ); ?></p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Google Maps API Key', 'corestarter' ); ?></th>
-						<td>
-							<input type="text" name="corestarter_options[google_maps_key]"
-								   value="<?php echo esc_attr( $opts['google_maps_key'] ); ?>"
-								   class="regular-text" placeholder="AIza...">
-							<p class="description">
-								<?php
-								printf(
-									/* translators: %s: Google Cloud Console URL. */
-									esc_html__( 'Required for the [corestarter_map] shortcode. Get your key from the %s.', 'corestarter' ),
-									'<a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer">Google Cloud Console</a>'
-								);
-								?>
-							</p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Head Scripts', 'corestarter' ); ?></th>
-						<td>
-							<textarea name="corestarter_options[head_scripts]"
-									  rows="8" class="large-text cs-code-editor"
-									  placeholder="<!-- Paste scripts/meta tags here -->"><?php echo esc_textarea( $opts['head_scripts'] ); ?></textarea>
-							<p class="description"><?php esc_html_e( 'Output in <head>. Use for verification meta tags, Facebook Pixel, etc. Include full <script> or <meta> tags.', 'corestarter' ); ?></p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Body Scripts', 'corestarter' ); ?></th>
-						<td>
-							<textarea name="corestarter_options[body_scripts]"
-									  rows="8" class="large-text cs-code-editor"
-									  placeholder="<!-- Paste scripts here -->"><?php echo esc_textarea( $opts['body_scripts'] ); ?></textarea>
-							<p class="description"><?php esc_html_e( 'Output right after the opening <body> tag. Use for GTM noscript fallbacks, chat widgets, etc.', 'corestarter' ); ?></p>
-						</td>
-					</tr>
-				</table>
+				<div class="cs-tab-inner">
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-chart-line"></span>
+							<div><h3><?php esc_html_e( 'Analytics & APIs', 'corestarter' ); ?></h3></div>
+						</div>
+						<div class="cs-section-body">
+							<table class="form-table">
+								<tr>
+									<th scope="row"><?php esc_html_e( 'GA4 Measurement ID', 'corestarter' ); ?></th>
+									<td>
+										<input type="text" name="corestarter_options[ga4_id]"
+											   value="<?php echo esc_attr( $opts['ga4_id'] ); ?>"
+											   class="regular-text" placeholder="G-XXXXXXXXXX">
+										<p class="description"><?php esc_html_e( 'Enter your Google Analytics 4 Measurement ID. The tracking script is injected automatically.', 'corestarter' ); ?></p>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php esc_html_e( 'GTM Container ID', 'corestarter' ); ?></th>
+									<td>
+										<input type="text" name="corestarter_options[gtm_id]"
+											   value="<?php echo esc_attr( $opts['gtm_id'] ); ?>"
+											   class="regular-text" placeholder="GTM-XXXXXXX">
+										<p class="description"><?php esc_html_e( 'Enter your Google Tag Manager Container ID. Both the head snippet and body noscript fallback are injected automatically.', 'corestarter' ); ?></p>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Google Maps API Key', 'corestarter' ); ?></th>
+									<td>
+										<input type="text" name="corestarter_options[google_maps_key]"
+											   value="<?php echo esc_attr( $opts['google_maps_key'] ); ?>"
+											   class="regular-text" placeholder="AIza...">
+										<p class="description">
+											<?php
+											printf(
+												/* translators: %s: Google Cloud Console URL. */
+												esc_html__( 'Required for the [corestarter_map] shortcode. Get your key from the %s.', 'corestarter' ),
+												'<a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer">Google Cloud Console</a>'
+											);
+											?>
+										</p>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-editor-code"></span>
+							<div>
+								<h3><?php esc_html_e( 'Script Injection', 'corestarter' ); ?></h3>
+								<p><?php esc_html_e( 'Use for verification tags, pixels, chat widgets, and other third-party scripts.', 'corestarter' ); ?></p>
+							</div>
+						</div>
+						<div class="cs-section-body">
+							<table class="form-table">
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Head Scripts', 'corestarter' ); ?></th>
+									<td>
+										<textarea name="corestarter_options[head_scripts]"
+												  rows="8" class="large-text cs-code-editor"
+												  placeholder="<!-- Paste scripts/meta tags here -->"><?php echo esc_textarea( $opts['head_scripts'] ); ?></textarea>
+										<p class="description"><?php esc_html_e( 'Output in <head>. Include full <script> or <meta> tags.', 'corestarter' ); ?></p>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row"><?php esc_html_e( 'Body Scripts', 'corestarter' ); ?></th>
+									<td>
+										<textarea name="corestarter_options[body_scripts]"
+												  rows="8" class="large-text cs-code-editor"
+												  placeholder="<!-- Paste scripts here -->"><?php echo esc_textarea( $opts['body_scripts'] ); ?></textarea>
+										<p class="description"><?php esc_html_e( 'Output right after the opening <body> tag.', 'corestarter' ); ?></p>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+				</div>
 			</div>
 
 			<!-- ============================================================
 			     Shortcodes Reference Tab
 			     ============================================================ -->
 			<div id="tab-shortcodes" class="cs-tab-content">
-				<h2><?php esc_html_e( 'Available Shortcodes', 'corestarter' ); ?></h2>
-				<p class="description"><?php esc_html_e( 'Copy and paste these shortcodes into any post, page, or widget. All parameters shown with their default values.', 'corestarter' ); ?></p>
+				<div class="cs-tab-inner">
 
-				<table class="widefat striped cs-shortcode-table" style="margin-top:16px;">
-					<thead>
-						<tr>
-							<th style="width:180px;"><?php esc_html_e( 'Shortcode', 'corestarter' ); ?></th>
-							<th><?php esc_html_e( 'Usage & Parameters', 'corestarter' ); ?></th>
-							<th style="width:280px;"><?php esc_html_e( 'Description', 'corestarter' ); ?></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><code>[corestarter_year]</code></td>
-							<td><code>[corestarter_year]</code></td>
-							<td><?php esc_html_e( 'Outputs the current year. Useful in footer copyright text.', 'corestarter' ); ?></td>
-						</tr>
-						<tr>
-							<td><code>[corestarter_button]</code></td>
-							<td>
-								<code>[corestarter_button url="#" text="Click Here" style="primary" target="_self"]</code>
-								<br><br>
-								<strong><?php esc_html_e( 'Parameters:', 'corestarter' ); ?></strong><br>
-								<code>url</code> &mdash; <?php esc_html_e( 'Link URL (default: #)', 'corestarter' ); ?><br>
-								<code>text</code> &mdash; <?php esc_html_e( 'Button text (default: Click Here)', 'corestarter' ); ?><br>
-								<code>style</code> &mdash; <code>primary</code> | <code>outline</code> <?php esc_html_e( '(default: primary)', 'corestarter' ); ?><br>
-								<code>target</code> &mdash; <code>_self</code> | <code>_blank</code> <?php esc_html_e( '(default: _self)', 'corestarter' ); ?>
-							</td>
-							<td><?php esc_html_e( 'Renders a styled button/link with customizable appearance.', 'corestarter' ); ?></td>
-						</tr>
-						<tr>
-							<td><code>[corestarter_map]</code></td>
-							<td>
-								<strong><?php esc_html_e( 'By address:', 'corestarter' ); ?></strong><br>
-								<code>[corestarter_map address="New York, NY" zoom="14" height="400px"]</code>
-								<br><br>
-								<strong><?php esc_html_e( 'By coordinates:', 'corestarter' ); ?></strong><br>
-								<code>[corestarter_map lat="14.5995" lng="120.9842" zoom="16" height="350px"]</code>
-								<br><br>
-								<strong><?php esc_html_e( 'Parameters:', 'corestarter' ); ?></strong><br>
-								<code>address</code> &mdash; <?php esc_html_e( 'Street address to geocode', 'corestarter' ); ?><br>
-								<code>lat</code> / <code>lng</code> &mdash; <?php esc_html_e( 'Coordinates (override address if both set)', 'corestarter' ); ?><br>
-								<code>zoom</code> &mdash; <?php esc_html_e( 'Zoom level 1-20 (default: 14)', 'corestarter' ); ?><br>
-								<code>height</code> &mdash; <?php esc_html_e( 'Map height (default: 400px)', 'corestarter' ); ?>
-							</td>
-							<td>
-								<?php esc_html_e( 'Embeds a Google Map. Requires a Google Maps API key set in the Tracking & Integrations tab. The Maps script is only loaded on pages that use this shortcode.', 'corestarter' ); ?>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-shortcode"></span>
+							<div>
+								<h3><?php esc_html_e( 'Available Shortcodes', 'corestarter' ); ?></h3>
+								<p><?php esc_html_e( 'Copy and paste into any post, page, or widget. All parameters shown with their defaults.', 'corestarter' ); ?></p>
+							</div>
+						</div>
+						<div class="cs-section-body">
+							<table class="widefat cs-shortcode-table">
+								<thead>
+									<tr>
+										<th style="width:180px;"><?php esc_html_e( 'Shortcode', 'corestarter' ); ?></th>
+										<th><?php esc_html_e( 'Usage & Parameters', 'corestarter' ); ?></th>
+										<th style="width:280px;"><?php esc_html_e( 'Description', 'corestarter' ); ?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><code>[corestarter_year]</code></td>
+										<td><code>[corestarter_year]</code></td>
+										<td><?php esc_html_e( 'Outputs the current year. Useful in footer copyright text.', 'corestarter' ); ?></td>
+									</tr>
+									<tr>
+										<td><code>[corestarter_button]</code></td>
+										<td>
+											<code>[corestarter_button url="#" text="Click Here" style="primary" target="_self"]</code>
+											<br><br>
+											<strong><?php esc_html_e( 'Parameters:', 'corestarter' ); ?></strong><br>
+											<code>url</code> &mdash; <?php esc_html_e( 'Link URL (default: #)', 'corestarter' ); ?><br>
+											<code>text</code> &mdash; <?php esc_html_e( 'Button text (default: Click Here)', 'corestarter' ); ?><br>
+											<code>style</code> &mdash; <code>primary</code> | <code>outline</code> <?php esc_html_e( '(default: primary)', 'corestarter' ); ?><br>
+											<code>target</code> &mdash; <code>_self</code> | <code>_blank</code> <?php esc_html_e( '(default: _self)', 'corestarter' ); ?>
+										</td>
+										<td><?php esc_html_e( 'Renders a styled button/link with customizable appearance.', 'corestarter' ); ?></td>
+									</tr>
+									<tr>
+										<td><code>[corestarter_map]</code></td>
+										<td>
+											<strong><?php esc_html_e( 'By address:', 'corestarter' ); ?></strong><br>
+											<code>[corestarter_map address="New York, NY" zoom="14" height="400px"]</code>
+											<br><br>
+											<strong><?php esc_html_e( 'By coordinates:', 'corestarter' ); ?></strong><br>
+											<code>[corestarter_map lat="14.5995" lng="120.9842" zoom="16" height="350px"]</code>
+											<br><br>
+											<strong><?php esc_html_e( 'Parameters:', 'corestarter' ); ?></strong><br>
+											<code>address</code> &mdash; <?php esc_html_e( 'Street address to geocode', 'corestarter' ); ?><br>
+											<code>lat</code> / <code>lng</code> &mdash; <?php esc_html_e( 'Coordinates (override address if both set)', 'corestarter' ); ?><br>
+											<code>zoom</code> &mdash; <?php esc_html_e( 'Zoom level 1-20 (default: 14)', 'corestarter' ); ?><br>
+											<code>height</code> &mdash; <?php esc_html_e( 'Map height (default: 400px)', 'corestarter' ); ?>
+										</td>
+										<td><?php esc_html_e( 'Embeds a Google Map. Requires a Google Maps API key set in the Tracking tab. The Maps script is only loaded on pages that use this shortcode.', 'corestarter' ); ?></td>
+									</tr>
+								</tbody>
+							</table>
 
-				<div style="margin-top:20px; padding:12px 16px; background:#f0f6fc; border-left:4px solid var(--wp-admin-theme-color, #2271b1); border-radius:2px;">
-					<p style="margin:0;">
-						<strong><?php esc_html_e( 'Adding Custom Shortcodes', 'corestarter' ); ?></strong><br>
-						<?php esc_html_e( 'Place .php files in the shortcodes/ folder of your child theme. They are loaded automatically alongside the built-in shortcodes.', 'corestarter' ); ?>
-					</p>
+							<div class="cs-info-block" style="margin-top:16px;">
+								<span class="dashicons dashicons-info-outline"></span>
+								<p>
+									<strong><?php esc_html_e( 'Adding Custom Shortcodes', 'corestarter' ); ?></strong><br>
+									<?php esc_html_e( 'Place .php files in the shortcodes/ folder of your child theme. They are loaded automatically alongside the built-in shortcodes.', 'corestarter' ); ?>
+								</p>
+							</div>
+						</div>
+					</div>
+
 				</div>
 			</div>
 
@@ -912,30 +1056,51 @@ function corestarter_options_page_html() {
 			     Custom Code Tab
 			     ============================================================ -->
 			<div id="tab-custom-code" class="cs-tab-content">
-				<h2><?php esc_html_e( 'Custom Code', 'corestarter' ); ?></h2>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Custom CSS', 'corestarter' ); ?></th>
-						<td>
+				<div class="cs-tab-inner">
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-editor-code"></span>
+							<div>
+								<h3><?php esc_html_e( 'Custom CSS', 'corestarter' ); ?></h3>
+								<p><?php esc_html_e( 'Added to the &lt;head&gt; section. Do not include &lt;style&gt; tags.', 'corestarter' ); ?></p>
+							</div>
+						</div>
+						<div class="cs-section-body">
 							<textarea name="corestarter_options[custom_css]"
-									  rows="12" class="large-text cs-code-editor"
+									  rows="14" class="large-text cs-code-editor"
 									  placeholder="/* Your custom CSS */"><?php echo esc_textarea( $opts['custom_css'] ); ?></textarea>
-							<p class="description"><?php esc_html_e( 'Added to the <head> section. Do not include <style> tags.', 'corestarter' ); ?></p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Custom JavaScript', 'corestarter' ); ?></th>
-						<td>
+						</div>
+					</div>
+
+					<div class="cs-section">
+						<div class="cs-section-header">
+							<span class="dashicons dashicons-media-code"></span>
+							<div>
+								<h3><?php esc_html_e( 'Custom JavaScript', 'corestarter' ); ?></h3>
+								<p><?php esc_html_e( 'Added before the closing &lt;/body&gt; tag. Do not include &lt;script&gt; tags.', 'corestarter' ); ?></p>
+							</div>
+						</div>
+						<div class="cs-section-body">
 							<textarea name="corestarter_options[custom_js]"
-									  rows="12" class="large-text cs-code-editor"
+									  rows="14" class="large-text cs-code-editor"
 									  placeholder="// Your custom JavaScript"><?php echo esc_textarea( $opts['custom_js'] ); ?></textarea>
-							<p class="description"><?php esc_html_e( 'Added before the closing </body> tag. Do not include <script> tags.', 'corestarter' ); ?></p>
-						</td>
-					</tr>
-				</table>
+						</div>
+					</div>
+
+				</div>
 			</div>
 
-			<?php submit_button( esc_html__( 'Save Settings', 'corestarter' ) ); ?>
+			<div class="cs-save-bar">
+				<span class="cs-save-bar-info">
+					<span class="dashicons dashicons-info"></span>
+					<?php esc_html_e( 'Changes apply sitewide after saving.', 'corestarter' ); ?>
+				</span>
+				<button type="submit" class="button button-primary">
+					<span class="dashicons dashicons-saved"></span>
+					<?php esc_html_e( 'Save Settings', 'corestarter' ); ?>
+				</button>
+			</div>
 
 		</form>
 	</div>

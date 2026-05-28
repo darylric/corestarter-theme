@@ -118,9 +118,10 @@ function corestarter_dynamic_css() {
 
 		if ( ! empty( $settings['family'] ) ) {
 			if ( isset( $system_fonts[ $settings['family'] ] ) ) {
-				$rules .= 'font-family: ' . $system_fonts[ $settings['family'] ] . ';';
+				// System font stack — use as-is, no quotes needed.
+				$rules .= 'font-family: ' . $system_fonts[ $settings['family'] ] . ' !important;';
 			} else {
-				$rules .= 'font-family: "' . esc_attr( $settings['family'] ) . '", sans-serif;';
+				$rules .= 'font-family: "' . esc_attr( $settings['family'] ) . '", sans-serif !important;';
 			}
 		}
 
@@ -128,18 +129,20 @@ function corestarter_dynamic_css() {
 			$size             = absint( $settings['size'] );
 			$heading_elements = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
 			if ( in_array( $element, $heading_elements, true ) ) {
-				$rules .= 'font-size: calc(' . $size . 'px * var(--cs-type-scale, 1));';
+				$rules .= 'font-size: calc(' . $size . 'px * var(--cs-type-scale, 1)) !important;';
 			} else {
-				$rules .= 'font-size: calc(' . $size . 'px * var(--cs-body-type-scale, 1));';
+				$rules .= 'font-size: calc(' . $size . 'px * var(--cs-body-type-scale, 1)) !important;';
 			}
 		}
 
 		if ( ! empty( $settings['weight'] ) ) {
-			$rules .= 'font-weight: ' . absint( $settings['weight'] ) . ';';
+			$rules .= 'font-weight: ' . absint( $settings['weight'] ) . ' !important;';
 		}
 
 		if ( $rules ) {
-			$css .= esc_attr( $element ) . ' { ' . $rules . ' }';
+			// Use body prefix to scope the rule and boost specificity slightly,
+			// plus !important above to beat any class-level rules in main.css.
+			$css .= 'body ' . esc_attr( $element ) . ' { ' . $rules . ' }';
 		}
 	}
 

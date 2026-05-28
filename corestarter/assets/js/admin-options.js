@@ -16,30 +16,41 @@
 	   ================================================== */
 
 	function initTabs() {
-		var $tabs    = $( '.cs-nav-tabs .nav-tab' );
-		var $panels  = $( '.cs-tab-content' );
+		var $tabs   = $( '.cs-nav-tabs .nav-tab' );
+		var $panels = $( '.cs-tab-content' );
 
-		// Restore active tab from URL hash.
-		var hash = window.location.hash;
-		if ( hash && $( hash ).length ) {
+		function activateTab( tabId ) {
 			$tabs.removeClass( 'nav-tab-active' );
 			$panels.removeClass( 'active' );
-			$( 'a[data-tab="' + hash.substring( 1 ) + '"]' ).addClass( 'nav-tab-active' );
-			$( hash ).addClass( 'active' );
+			$( 'a[data-tab="' + tabId + '"]' ).addClass( 'nav-tab-active' );
+			$( '#' + tabId ).addClass( 'active' );
+		}
+
+		function setTabUrl( tabId ) {
+			// Use a query-param so the value survives the options.php redirect.
+			var url = new URL( window.location.href );
+			url.searchParams.set( 'tab', tabId );
+			url.hash = ''; // clear any stale hash
+			var newUrl = url.pathname + url.search;
+			window.history.replaceState( null, null, newUrl );
+
+			// Keep _wp_http_referer in sync — WordPress redirects back to
+			// whatever this field says after saving, so the tab is preserved.
+			$( 'input[name="_wp_http_referer"]' ).val( newUrl );
+		}
+
+		// Restore active tab from URL query-param (survives the save redirect).
+		var urlParams = new URLSearchParams( window.location.search );
+		var activeTab = urlParams.get( 'tab' );
+		if ( activeTab && $( '#' + activeTab ).length ) {
+			activateTab( activeTab );
 		}
 
 		$tabs.on( 'click', function ( e ) {
 			e.preventDefault();
 			var target = $( this ).data( 'tab' );
-
-			$tabs.removeClass( 'nav-tab-active' );
-			$( this ).addClass( 'nav-tab-active' );
-
-			$panels.removeClass( 'active' );
-			$( '#' + target ).addClass( 'active' );
-
-			// Persist via hash.
-			window.history.replaceState( null, null, '#' + target );
+			activateTab( target );
+			setTabUrl( target );
 		} );
 	}
 
