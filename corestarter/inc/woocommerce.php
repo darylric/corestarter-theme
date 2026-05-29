@@ -76,6 +76,16 @@ function corestarter_woocommerce_scripts() {
 		);
 	}
 
+	// Single product layout — only on individual product pages.
+	if ( is_product() ) {
+		wp_enqueue_style(
+			'corestarter-woocommerce-single',
+			CORESTARTER_URI . '/assets/css/woocommerce-single.css',
+			array( 'corestarter-woocommerce' ),
+			CORESTARTER_VERSION
+		);
+	}
+
 
 	// Shop filter drawer script — only on shop archive pages.
 	if ( is_shop() || is_product_category() || is_product_tag() || is_product_taxonomy() ) {
@@ -345,3 +355,28 @@ function corestarter_shop_loop_product_title() {
 }
 remove_action( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10 );
 add_action( 'woocommerce_shop_loop_item_title', 'corestarter_shop_loop_product_title', 10 );
+
+/**
+ * Single product page tweaks — runs after the query is set up.
+ *
+ * 1. Force no sidebar so the two-column gallery/summary layout has full width.
+ * 2. Move the sale flash badge from the gallery column into the summary column
+ *    (renders above the product title, styled as a pill in woocommerce-single.css).
+ */
+add_action( 'wp', function () {
+	if ( ! is_product() ) {
+		return;
+	}
+
+	// ── 1. No sidebar on single product pages ────────────────────────────────
+	add_filter( 'body_class', function ( $classes ) {
+		$classes = array_diff( $classes, array( 'sidebar-right', 'sidebar-left' ) );
+		$classes[] = 'sidebar-none';
+		$classes[] = 'no-sidebar';
+		return $classes;
+	}, 20 );
+
+	// ── 2. Move sale badge into the summary column ───────────────────────────
+	remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 10 );
+	add_action( 'woocommerce_single_product_summary', 'woocommerce_show_product_sale_flash', 1 );
+} );
